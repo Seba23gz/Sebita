@@ -4,453 +4,352 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mapa Interactivo — Italia Roadtrip</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Barlow+Condensed:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ink:#0d1219;
-  --parchment:#f0ebe0;
-  --sand:#e3ddd0;
-  --stone:#9a8e80;
-  --route:#002eff;
-  --fire:#ff3d00;
-  --mint:#41e8b4;
-  --w:#fff;
-  --panel-w:360px;
+  --ink:    #141e2e;
+  --paper:  #f4efe4;
+  --card:   #ede8dc;
+  --line:   #ddd8cc;
+  --stone:  #7a7068;
+  --route:  #2563c4;
+  --red:    #d4370f;
+  --olive:  #4a6741;
+  --amber:  #e8941a;
+  --w:      #ffffff;
 }
 html,body{height:100%;overflow:hidden;font-family:'Barlow',sans-serif;background:var(--ink)}
 
 /* ── LAYOUT ── */
-.app{display:flex;height:100vh;position:relative}
+.app{display:flex;height:100vh}
 
-/* ── MAP AREA ── */
-.map-area{
-  flex:1;position:relative;overflow:hidden;
-  background:radial-gradient(ellipse at 40% 30%, #141e3a 0%, #0a0f1e 60%, #060b15 100%);
-}
+/* ── MAP ── */
+.map-area{flex:1;position:relative;overflow:hidden;background:radial-gradient(ellipse at 40% 30%,#1a2744 0%,#0e1626 55%,#080e1a 100%)}
 #map-canvas{position:absolute;inset:0;width:100%;height:100%;cursor:grab}
-#map-canvas.dragging{cursor:grabbing}
+#map-canvas.drag{cursor:grabbing}
 
-/* ── MARKERS (HTML overlay) ── */
+/* ── MARKERS ── */
 .markers{position:absolute;inset:0;pointer-events:none}
 .marker{
   position:absolute;pointer-events:all;cursor:pointer;
-  transform:translate(-50%,-50%);
-  display:flex;flex-direction:column;align-items:center;gap:0;
+  transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:0;
 }
 .marker-ring{
-  width:22px;height:22px;border-radius:50%;
-  border:2px solid var(--fire);background:rgba(13,18,25,0.85);
+  width:20px;height:20px;border-radius:50%;
+  border:2px solid var(--red);background:rgba(8,14,26,.9);
   display:flex;align-items:center;justify-content:center;
-  transition:transform .18s, border-color .18s, background .18s;
+  transition:transform .16s,border-color .16s,background .16s;
   position:relative;z-index:2;
 }
 .marker-ring::before{
-  content:'';position:absolute;inset:-5px;border-radius:50%;
-  background:rgba(255,61,0,0.15);opacity:0;
-  transition:opacity .18s;
+  content:'';position:absolute;inset:-6px;border-radius:50%;
+  background:rgba(212,55,15,.15);opacity:0;transition:opacity .16s;
 }
-.marker.active .marker-ring,
-.marker:hover .marker-ring{
-  background:var(--fire);border-color:var(--fire);transform:scale(1.3);
+.marker.active .marker-ring,.marker:hover .marker-ring{background:var(--red);border-color:var(--red);transform:scale(1.35)}
+.marker.active .marker-ring::before,.marker:hover .marker-ring::before{opacity:1}
+.marker-pip{width:5px;height:5px;border-radius:50%;background:var(--red);transition:background .16s}
+.marker.active .marker-pip,.marker:hover .marker-pip{background:var(--w)}
+.marker-num{
+  position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;
+  background:var(--route);font-size:6.5px;font-weight:800;color:var(--w);
+  display:flex;align-items:center;justify-content:center;
+  font-variant-numeric:tabular-nums;border:1.5px solid var(--ink);
 }
-.marker.active .marker-ring::before,
-.marker:hover .marker-ring::before{opacity:1}
-.marker-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--fire);transition:background .18s;
-}
-.marker.active .marker-dot,
-.marker:hover .marker-dot{background:var(--w)}
 .marker-label{
   font-family:'Barlow Condensed',sans-serif;
-  font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-  color:rgba(255,255,255,.75);margin-top:5px;white-space:nowrap;
-  text-shadow:0 1px 4px rgba(0,0,0,.9);
-  transition:color .18s;
+  font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:rgba(255,255,255,.7);margin-top:5px;white-space:nowrap;
+  text-shadow:0 1px 5px rgba(0,0,0,.95);transition:color .16s;
 }
-.marker.active .marker-label,
-.marker:hover .marker-label{color:var(--w)}
-.marker-num{
-  position:absolute;top:-1px;right:-1px;
-  width:13px;height:13px;border-radius:50%;
-  background:var(--route);
-  font-size:7px;font-weight:800;color:var(--w);
-  display:flex;align-items:center;justify-content:center;
-  font-variant-numeric:tabular-nums;
-  border:1.5px solid var(--ink);
-}
+.marker.active .marker-label,.marker:hover .marker-label{color:var(--w)}
+.marker.optional-marker .marker-ring{border-color:var(--olive);border-style:dashed}
+.marker.optional-marker .marker-pip{background:var(--olive)}
 
 /* ── PANEL ── */
 .panel{
-  width:var(--panel-w);flex-shrink:0;
-  background:var(--parchment);
-  display:flex;flex-direction:column;
-  overflow:hidden;position:relative;
-  border-left:1px solid var(--sand);
-}
-.panel-header{
-  background:var(--ink);padding:24px 28px 20px;flex-shrink:0;
-}
-.panel-title{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:22px;font-weight:900;color:var(--w);letter-spacing:-.01em;
-}
-.panel-sub{font-size:12px;color:rgba(255,255,255,.45);margin-top:3px}
-.route-progress{
-  display:flex;align-items:center;gap:0;margin-top:16px;
-  overflow-x:auto;scrollbar-width:none;padding-bottom:2px;
-}
-.route-progress::-webkit-scrollbar{display:none}
-.prog-stop{
-  display:flex;flex-direction:column;align-items:center;gap:3px;
-  flex-shrink:0;cursor:pointer;padding:0 6px;
-  transition:opacity .15s;
-}
-.prog-stop:not(.prog-active){opacity:.35}
-.prog-stop:hover{opacity:.8}
-.prog-dot{
-  width:8px;height:8px;border-radius:50%;
-  background:var(--stone);border:1.5px solid var(--stone);
-  transition:background .15s,border-color .15s;
-}
-.prog-active .prog-dot{background:var(--fire);border-color:var(--fire)}
-.prog-line{width:16px;height:1px;background:rgba(255,255,255,.15);align-self:center;flex-shrink:0}
-.prog-num{font-size:8px;font-weight:700;color:rgba(255,255,255,.4);font-variant-numeric:tabular-nums}
-.prog-active .prog-num{color:var(--fire)}
-
-/* ── CITY LIST ── */
-.city-list{flex:1;overflow-y:auto;padding:8px 0}
-.city-list::-webkit-scrollbar{width:4px}
-.city-list::-webkit-scrollbar-track{background:transparent}
-.city-list::-webkit-scrollbar-thumb{background:var(--sand);border-radius:2px}
-.city-item{
-  display:flex;align-items:center;gap:14px;
-  padding:12px 28px;cursor:pointer;
-  border-bottom:1px solid var(--sand);
-  transition:background .12s;position:relative;
-}
-.city-item:hover{background:rgba(0,46,255,.04)}
-.city-item.active{background:rgba(0,46,255,.06)}
-.city-item.active::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;
-  width:3px;background:var(--route);
-}
-.city-item-num{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:13px;font-weight:800;color:var(--stone);
-  font-variant-numeric:tabular-nums;width:20px;flex-shrink:0;
-}
-.city-item.active .city-item-num{color:var(--route)}
-.city-item-info{flex:1;min-width:0}
-.city-item-name{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;
-  color:var(--ink);
-}
-.city-item-date{font-size:11px;color:var(--stone);font-weight:500;margin-top:1px}
-.city-item-days{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:12px;font-weight:700;color:var(--stone);flex-shrink:0;
-}
-
-/* ── DETAIL PANEL (slides over city list) ── */
-.detail{
-  position:absolute;inset:0;top:0;
-  background:var(--parchment);
-  transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+  width:360px;flex-shrink:0;background:var(--paper);
   display:flex;flex-direction:column;overflow:hidden;
-  z-index:10;
+  border-left:1px solid rgba(255,255,255,.06);
+}
+.panel-header{background:var(--ink);padding:22px 26px 18px;flex-shrink:0}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--w)}
+.panel-sub{font-size:11px;color:rgba(255,255,255,.38);margin-top:2px}
+
+/* Progress dots */
+.progress{display:flex;align-items:center;margin-top:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.progress::-webkit-scrollbar{display:none}
+.p-stop{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;cursor:pointer;padding:0 4px;opacity:.35;transition:opacity .14s}
+.p-stop:hover,.p-stop.on{opacity:1}
+.p-dot{width:7px;height:7px;border-radius:50%;background:var(--stone);border:1.5px solid var(--stone);transition:background .14s,border-color .14s}
+.p-stop.on .p-dot{background:var(--red);border-color:var(--red)}
+.p-stop.optional .p-dot{border-color:var(--olive);background:transparent}
+.p-stop.on.optional .p-dot{background:var(--olive)}
+.p-n{font-size:7px;font-weight:700;color:rgba(255,255,255,.35);font-variant-numeric:tabular-nums}
+.p-stop.on .p-n{color:var(--red)}
+.p-line{width:12px;height:1px;background:rgba(255,255,255,.12);flex-shrink:0;align-self:center}
+
+/* City list */
+.city-list{flex:1;overflow-y:auto}
+.city-list::-webkit-scrollbar{width:3px}
+.city-list::-webkit-scrollbar-thumb{background:var(--line)}
+.city-item{
+  display:flex;align-items:center;gap:12px;padding:11px 26px;cursor:pointer;
+  border-bottom:1px solid var(--line);transition:background .1s;position:relative;
+}
+.city-item:hover{background:rgba(37,99,196,.04)}
+.city-item.active{background:rgba(37,99,196,.07)}
+.city-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--route)}
+.c-num{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;color:var(--stone);font-variant-numeric:tabular-nums;width:18px;flex-shrink:0}
+.city-item.active .c-num{color:var(--route)}
+.c-info{flex:1;min-width:0}
+.c-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;text-transform:uppercase;color:var(--ink)}
+.c-date{font-size:10px;color:var(--stone);font-weight:500;margin-top:1px}
+.c-days{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--stone);flex-shrink:0}
+.city-item.optional-item .c-name{color:var(--olive)}
+.opt-pill{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:rgba(74,103,65,.12);color:var(--olive);padding:2px 6px;border:1px solid rgba(74,103,65,.25);margin-left:6px;vertical-align:middle}
+
+/* ── DETAIL ── */
+.detail{
+  position:absolute;inset:0;background:var(--paper);
+  transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;overflow:hidden;z-index:10;
 }
 .detail.open{transform:translateX(0)}
-.detail-top{
-  background:var(--ink);padding:20px 24px;flex-shrink:0;
-  display:flex;align-items:flex-start;gap:12px;
+.det-top{background:var(--ink);padding:18px 22px;flex-shrink:0;display:flex;align-items:flex-start;gap:10px}
+.det-back{background:none;border:none;color:rgba(255,255,255,.45);font-size:18px;cursor:pointer;padding:0;line-height:1;transition:color .14s;flex-shrink:0;margin-top:1px}
+.det-back:hover{color:var(--w)}
+.det-back:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.det-head{flex:1}
+.det-stop{font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red);margin-bottom:5px}
+.det-city{font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,5vw,34px);font-weight:900;color:var(--w);line-height:1;text-transform:uppercase;text-wrap:balance}
+.det-region{font-size:10px;color:rgba(255,255,255,.38);font-weight:500;margin-top:4px;letter-spacing:.1em;text-transform:uppercase}
+.det-body{flex:1;overflow-y:auto;padding:20px 22px}
+.det-body::-webkit-scrollbar{width:3px}
+.det-body::-webkit-scrollbar-thumb{background:var(--line)}
+.d-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.d-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--stone)}
+.d-val{font-size:13px;font-weight:700;color:var(--ink)}
+.d-km{display:inline-flex;align-items:center;gap:5px;margin-top:12px;background:rgba(37,99,196,.08);color:var(--route);font-size:10px;font-weight:700;letter-spacing:.07em;padding:4px 10px;font-variant-numeric:tabular-nums}
+.d-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:13px}
+.d-tag{background:var(--card);color:var(--ink);font-size:11px;font-weight:600;padding:3px 9px}
+.d-tag.r{background:var(--red);color:var(--w)}
+.d-tag.b{background:var(--route);color:var(--w)}
+.d-tag.g{background:var(--olive);color:var(--w)}
+.d-desc{font-size:13px;line-height:1.72;color:#3d3530;margin-top:13px}
+.d-tips{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.d-tip{display:flex;gap:8px;font-size:12px;color:#5a4f47;line-height:1.5}
+.d-arr{color:var(--route);font-weight:700;flex-shrink:0}
+.d-opt-badge{
+  display:inline-flex;align-items:center;gap:5px;margin-bottom:8px;
+  background:rgba(74,103,65,.1);color:var(--olive);border:1px solid rgba(74,103,65,.3);
+  font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;
 }
-.detail-back{
-  background:none;border:none;color:rgba(255,255,255,.5);
-  font-size:20px;cursor:pointer;padding:0;line-height:1;
-  transition:color .15s;flex-shrink:0;margin-top:2px;
-}
-.detail-back:hover{color:var(--w)}
-.detail-back:focus-visible{outline:2px solid var(--mint);outline-offset:2px}
-.detail-heading{flex:1}
-.detail-stop{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--fire);margin-bottom:6px}
-.detail-city{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:clamp(28px,5vw,38px);font-weight:900;color:var(--w);
-  line-height:1;text-transform:uppercase;text-wrap:balance;
-}
-.detail-region{font-size:11px;color:rgba(255,255,255,.4);font-weight:500;margin-top:4px;letter-spacing:.1em;text-transform:uppercase}
-.detail-body{flex:1;overflow-y:auto;padding:22px 24px}
-.detail-body::-webkit-scrollbar{width:3px}
-.detail-body::-webkit-scrollbar-thumb{background:var(--sand)}
-.det-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--sand)}
-.det-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--stone)}
-.det-val{font-size:14px;font-weight:600;color:var(--ink);text-align:right}
-.det-km{
-  display:inline-flex;align-items:center;gap:5px;margin-top:14px;
-  background:#e8eeff;color:var(--route);
-  font-size:11px;font-weight:700;letter-spacing:.06em;padding:4px 10px;
-  font-variant-numeric:tabular-nums;
-}
-.det-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
-.det-tag{
-  background:var(--sand);color:var(--ink);
-  font-size:11px;font-weight:600;padding:4px 10px;
-}
-.det-tag.h{background:var(--fire);color:var(--w)}
-.det-tag.b{background:var(--route);color:var(--w)}
-.det-desc{font-size:13.5px;line-height:1.72;color:#3d3530;margin-top:14px}
-.det-tips{margin-top:14px;display:flex;flex-direction:column;gap:7px}
-.det-tip{display:flex;gap:8px;font-size:12px;color:#5a4f47;line-height:1.5}
-.det-arr{color:var(--route);font-weight:700;flex-shrink:0}
-.nav-btns{
-  display:flex;border-top:1px solid var(--sand);flex-shrink:0;
-}
+/* Nav buttons */
+.nav-btns{display:flex;border-top:1px solid var(--line);flex-shrink:0}
 .nav-btn{
-  flex:1;padding:14px;background:none;border:none;cursor:pointer;
-  font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;
-  color:var(--stone);transition:background .12s,color .12s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
+  flex:1;padding:13px;background:none;border:none;cursor:pointer;
+  font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--stone);transition:background .1s,color .1s;display:flex;align-items:center;justify-content:center;gap:6px;
 }
-.nav-btn:hover{background:var(--sand);color:var(--ink)}
+.nav-btn:hover{background:var(--card);color:var(--ink)}
 .nav-btn:focus-visible{outline:2px solid var(--route);outline-offset:-2px}
-.nav-btn+.nav-btn{border-left:1px solid var(--sand)}
+.nav-btn+.nav-btn{border-left:1px solid var(--line)}
+.nav-btn:disabled{opacity:.28;pointer-events:none}
 
 /* ── CONTROLS ── */
-.controls{
-  position:absolute;bottom:24px;left:24px;
-  display:flex;flex-direction:column;gap:8px;z-index:5;
-}
-.ctrl-btn{
-  width:38px;height:38px;border-radius:4px;
-  background:rgba(13,18,25,.85);border:1px solid rgba(255,255,255,.12);
-  color:rgba(255,255,255,.7);font-size:18px;line-height:1;
+.controls{position:absolute;bottom:24px;left:20px;display:flex;flex-direction:column;gap:7px;z-index:5}
+.ctrl{
+  width:36px;height:36px;border-radius:3px;
+  background:rgba(8,14,26,.85);border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.65);font-size:17px;line-height:1;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:background .15s,color .15s;backdrop-filter:blur(8px);
+  transition:background .14s,color .14s;backdrop-filter:blur(8px);
 }
-.ctrl-btn:hover{background:rgba(255,255,255,.1);color:var(--w)}
-.ctrl-btn:focus-visible{outline:2px solid var(--mint)}
+.ctrl:hover{background:rgba(255,255,255,.1);color:var(--w)}
+.ctrl:focus-visible{outline:2px solid var(--amber)}
 
-/* ── LEGEND ── */
+/* Legend */
 .legend{
-  position:absolute;bottom:24px;right:24px;
-  background:rgba(13,18,25,.85);border:1px solid rgba(255,255,255,.1);
-  padding:14px 16px;font-size:11px;color:rgba(255,255,255,.55);
-  backdrop-filter:blur(8px);display:flex;flex-direction:column;gap:8px;
+  position:absolute;bottom:24px;right:20px;
+  background:rgba(8,14,26,.85);border:1px solid rgba(255,255,255,.1);
+  padding:12px 14px;font-size:10px;color:rgba(255,255,255,.45);
+  backdrop-filter:blur(8px);display:flex;flex-direction:column;gap:7px;
 }
-.leg-row{display:flex;align-items:center;gap:10px}
-.leg-line{width:24px;height:2px;background:var(--route);display:flex;align-items:center;justify-content:center}
-.leg-dash{width:24px;height:1px;border-top:2px dashed rgba(255,255,255,.25)}
+.leg-r{display:flex;align-items:center;gap:8px}
+.l-solid{width:22px;height:2px;background:var(--route)}
+.l-dash{width:22px;height:0;border-top:2px dashed rgba(74,103,65,.8)}
 
-/* ── TOOLTIP ── */
-.tooltip{
-  position:fixed;pointer-events:none;
-  background:rgba(13,18,25,.92);border:1px solid rgba(255,255,255,.1);
-  color:var(--w);font-size:11px;font-weight:600;
-  padding:6px 10px;letter-spacing:.04em;text-transform:uppercase;
-  transform:translate(-50%,-140%);
-  opacity:0;transition:opacity .12s;
-  backdrop-filter:blur(8px);white-space:nowrap;z-index:100;
+/* Tooltip */
+.tt{
+  position:fixed;pointer-events:none;z-index:100;
+  background:rgba(8,14,26,.92);border:1px solid rgba(255,255,255,.1);
+  color:var(--w);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:5px 9px;transform:translate(-50%,-150%);opacity:0;transition:opacity .1s;
+  backdrop-filter:blur(8px);white-space:nowrap;
 }
-.tooltip.show{opacity:1}
+.tt.show{opacity:1}
 
-/* ── RESPONSIVE ── */
-@media(max-width:700px){
+/* Responsive */
+@media(max-width:720px){
   .app{flex-direction:column}
-  .panel{width:100%;height:45vh;border-left:none;border-top:1px solid var(--sand)}
-  #map-canvas{height:100%;width:100%}
+  .panel{width:100%;height:44vh;border-left:none;border-top:1px solid rgba(255,255,255,.08)}
   .legend{display:none}
-  :root{--panel-w:100%}
 }
-@media(prefers-reduced-motion:reduce){
-  .detail,.marker-ring{transition:none}
-}
+@media(prefers-reduced-motion:reduce){.detail,.marker-ring{transition:none}}
 </style>
 </head>
 <body>
 
 <div class="app">
-  <!-- MAP -->
   <div class="map-area" id="map-area">
     <canvas id="map-canvas"></canvas>
     <div class="markers" id="markers"></div>
-
     <div class="controls">
-      <button class="ctrl-btn" id="zoom-in" title="Acercar" aria-label="Acercar">+</button>
-      <button class="ctrl-btn" id="zoom-out" title="Alejar" aria-label="Alejar">−</button>
-      <button class="ctrl-btn" id="reset-view" title="Centrar" aria-label="Centrar vista" style="font-size:14px">⌖</button>
+      <button class="ctrl" id="zi" title="Acercar" aria-label="Acercar">+</button>
+      <button class="ctrl" id="zo" title="Alejar" aria-label="Alejar">−</button>
+      <button class="ctrl" id="zr" title="Centrar" aria-label="Centrar vista" style="font-size:13px">⌖</button>
     </div>
-
     <div class="legend">
-      <div class="leg-row"><div class="leg-line"></div><span>Ruta del viaje</span></div>
-      <div class="leg-row"><div class="leg-dash"></div><span>Excursión</span></div>
+      <div class="leg-r"><div class="l-solid"></div><span>Ruta principal</span></div>
+      <div class="leg-r"><div class="l-dash"></div><span>Parada opcional</span></div>
     </div>
   </div>
 
-  <!-- PANEL -->
   <div class="panel" id="panel">
     <div class="panel-header">
       <div class="panel-title">Italia Roadtrip</div>
-      <div class="panel-sub">Dic 2025 – Ene 2026 · 12 ciudades · ~2.100 km</div>
-      <div class="route-progress" id="route-progress"></div>
+      <div class="panel-sub">21 Dic 2025 – 10 Ene 2026 · 12 ciudades + Sicilia opcional</div>
+      <div class="progress" id="progress"></div>
     </div>
     <div class="city-list" id="city-list"></div>
 
-    <!-- DETAIL SLIDE -->
     <div class="detail" id="detail">
-      <div class="detail-top">
-        <button class="detail-back" id="detail-back" aria-label="Volver">←</button>
-        <div class="detail-heading">
-          <div class="detail-stop" id="d-stop"></div>
-          <div class="detail-city" id="d-city"></div>
-          <div class="detail-region" id="d-region"></div>
+      <div class="det-top">
+        <button class="det-back" id="det-back" aria-label="Volver">←</button>
+        <div class="det-head">
+          <div class="det-stop" id="d-stop"></div>
+          <div class="det-city" id="d-city"></div>
+          <div class="det-region" id="d-region"></div>
         </div>
       </div>
-      <div class="detail-body" id="d-body"></div>
+      <div class="det-body" id="d-body"></div>
       <div class="nav-btns">
-        <button class="nav-btn" id="nav-prev">← Anterior</button>
-        <button class="nav-btn" id="nav-next">Siguiente →</button>
+        <button class="nav-btn" id="n-prev">← Anterior</button>
+        <button class="nav-btn" id="n-next">Siguiente →</button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="tooltip" id="tooltip"></div>
+<div class="tt" id="tt"></div>
 
 <script>
-// ── DATA ──
 const CITIES = [
   {
-    id:1, name:'Milano', region:'Lombardía',
-    dates:'26–28 Dic', days:'3 días', km:null,
-    lat:45.46, lon:9.19,
-    tags:['Duomo','Galleria V.E. II','Castello Sforzesco','La Última Cena'],
-    hot:['Mercados de Navidad'],
-    desc:'Milán en Navidad es una ciudad diferente. El Duomo iluminado, los mercados del Castello y la Galleria decorada son de otro nivel. Llegar el 26 para evitar el caos del 24–25 y aprovechar las rebajas post-Navidad.',
-    tips:['Reservar Cenacolo Vinciano con 2–3 meses de anticipación — solo 25 personas por turno.',
-          'Navigli para aperitivo, Brera para galerías, Peck para embutidos y quesos.',
-          'Dejar el auto en el hotel. El metro M1/M2/M3 cubre todo el centro.']
+    id:1,name:'Milano',region:'Lombardía · Llegada',
+    dates:'21–23 Dic',days:'3 días',km:null,optional:false,
+    lat:45.46,lon:9.19,
+    tags:['Duomo di Milano','Galleria V.E. II','Castello Sforzesco','La Última Cena','Brera'],
+    hot:['Mercados de Navidad'],blue:[],green:[],
+    desc:'Milán en Navidad es una ciudad diferente. El Duomo iluminado, los mercados del Castello y la Galleria decorada son de otro nivel. Llegar el 21 para acomodarse antes de que la ciudad explote de gente.',
+    tips:['Reservar Cenacolo Vinciano con 2–3 meses de anticipación — solo 25 personas por turno.','Navigli para aperitivo, Brera para galerías, Peck para embutidos y quesos.','Dejar el auto en el hotel. El metro cubre todo el centro.']
   },
   {
-    id:2, name:'Lago di Como', region:'Lombardía',
-    dates:'29 Dic', days:'1 día', km:'45 km desde Milano',
-    lat:45.98, lon:9.08,
-    tags:['Bellagio','Varenna','Ferry del lago','Villa Carlotta'],
-    hot:[],
-    desc:'El Lago de Como en invierno tiene una calma absoluta. Los pueblos de la orilla están casi sin turistas y la neblina matinal sobre el agua es un espectáculo.',
-    tips:['Salir temprano desde Milán (45 min en auto) para la luz de la mañana.',
-          'Ferry Bellagio–Varenna: verificar horario de invierno en navigazionelaghi.it.']
+    id:2,name:'Lago di Como',region:'Lombardía · Nochebuena',
+    dates:'24 Dic',days:'1 día',km:'45 km desde Milano',optional:false,
+    lat:45.98,lon:9.08,
+    tags:['Bellagio','Varenna','Ferry del lago'],hot:['Nochebuena en el lago'],blue:[],green:[],
+    desc:'Nochebuena en el Lago de Como es una experiencia irrepetible. Los pueblos están casi sin turistas y la neblina sobre el agua al atardecer es preciosa.',
+    tips:['Salir temprano desde Milán (45 min) para el ferry antes de que oscurezca.','Verificar horario de invierno en navigazionelaghi.it.','Reservar la cena de Nochebuena con anticipación.']
   },
   {
-    id:3, name:'Verona', region:'Veneto',
-    dates:'30 Dic', days:'1 día', km:'155 km desde Milano',
-    lat:45.44, lon:10.99,
-    tags:['Arena di Verona','Casa di Giulietta','Piazza delle Erbe','Ponte Pietra'],
-    hot:[],
-    desc:'Perfecta como parada de medio día entre Milán y Venecia. La Arena romana, el casco medieval y la leyenda de Romeo y Julieta están todo a caminata.',
-    tips:['Aparcar en Parcheggio Arena y hacer todo el centro a pie.',
-          'Almorzar en Piazza delle Erbe antes de seguir a Venezia.']
+    id:3,name:'Verona',region:'Veneto · Navidad',
+    dates:'25 Dic',days:'1 día',km:'155 km desde Milano',optional:false,
+    lat:45.44,lon:10.99,
+    tags:['Arena di Verona','Casa di Giulietta','Piazza delle Erbe'],hot:['Navidad en Verona'],blue:[],green:[],
+    desc:'Pasar Navidad en Verona es un plan precioso — la ciudad medieval con pocas personas y la Arena iluminada. La parada perfecta camino a Venecia.',
+    tips:['El 25 muchos restaurantes abren solo para cena — reservar con anticipación.','Aparcar en Parcheggio Arena y recorrer el centro a pie.']
   },
   {
-    id:4, name:'Venezia', region:'Veneto',
-    dates:'31 Dic – 2 Ene', days:'3 días', km:'265 km desde Milano',
-    lat:45.44, lon:12.33,
-    tags:['Piazza San Marco','Basílica di San Marco','Rialto','Dorsoduro','Burano'],
-    hot:['Capodanno 🎆'],
-    desc:'Año Nuevo en Venecia es una experiencia única — los fuegos artificiales sobre la laguna desde Piazza San Marco son espectaculares. En invierno es la versión más auténtica: acqua alta posible, atmósfera casi fantasmal.',
-    tips:['Dejar el auto en Piazzale Roma — en Venecia no circulan autos.',
-          'Comprar stivali di gomma si hay previsión de acqua alta.',
-          'Comer cicchetti en los bacari del Rialto — el tapeo veneciano.',
-          'Evitar restaurantes de Piazza San Marco — marcan el doble por la ubicación.']
+    id:4,name:'Venezia',region:'Veneto',
+    dates:'26–28 Dic',days:'3 días',km:'265 km desde Milano',optional:false,
+    lat:45.44,lon:12.33,
+    tags:['Piazza San Marco','Basílica di San Marco','Rialto','Dorsoduro','Burano'],hot:[],blue:[],green:[],
+    desc:'Venecia post-Navidad es la versión más auténtica: pocos turistas, posible acqua alta y una atmósfera casi fantasmal que en verano es imposible de encontrar.',
+    tips:['Dejar el auto en Piazzale Roma — en Venecia no circulan autos.','Comprar stivali di gomma si hay previsión de acqua alta.','Comer cicchetti en los bacari del Rialto — el tapeo veneciano.','Vaporetto a Burano el día 27 o 28 — los colores en invierno son increíbles.']
   },
   {
-    id:5, name:'Bologna', region:'Emilia-Romagna',
-    dates:'3 Ene', days:'1 día', km:'155 km desde Venezia',
-    lat:44.49, lon:11.34,
-    tags:['Mercato Quadrilatero','Piazza Maggiore','Due Torri'],
-    hot:['Tagliatelle al ragù auténtico'],
+    id:5,name:'Bologna',region:'Emilia-Romagna',
+    dates:'29 Dic',days:'1 día',km:'155 km desde Venezia',optional:false,
+    lat:44.49,lon:11.34,
+    tags:['Mercato Quadrilatero','Piazza Maggiore','Due Torri'],hot:['Tagliatelle al ragù'],blue:[],green:[],
     desc:'Bologna la Grassa — la ciudad más gorda de Italia. El mercado del Quadrilatero es uno de los mejores de Europa para mortadela, parmesano y prosciutto.',
-    tips:['Tagliatelle al ragù en una osteria tradicional. No llamarle "boloñesa" — eso ofende.',
-          'Subir Torre Asinelli para la mejor vista de la ciudad.']
+    tips:['Tagliatelle al ragù en una osteria. No llamarle "boloñesa" — eso ofende.','Subir Torre Asinelli para la mejor vista de la ciudad.']
   },
   {
-    id:6, name:'Firenze', region:'Toscana',
-    dates:'4–6 Ene', days:'3 días', km:'105 km desde Bologna',
-    lat:43.77, lon:11.25,
-    tags:['Uffizi','David · Accademia','Duomo de Brunelleschi','Oltrarno','Ponte Vecchio'],
-    hot:['Epifanía 6 Ene 🎉'],
-    desc:'En enero los Uffizi tienen colas de 20 min vs 3 horas en verano. La Epifanía del 6 de enero es fiesta mayor — procesiones por toda la ciudad y los niños italianos reciben regalos ese día.',
-    tips:['Reservar Uffizi y Accademia en uffizi.it — incluso en temporada baja.',
-          'Subir a Piazzale Michelangelo al amanecer: la ciudad en la niebla.',
-          'Cenas en Oltrarno — más auténtico y mejor precio.',
-          'Lampredotto en Mercato Centrale — el street food florentino más real.']
+    id:6,name:'Firenze',region:'Toscana',
+    dates:'30 Dic – 1 Ene',days:'3 días',km:'105 km desde Bologna',optional:false,
+    lat:43.77,lon:11.25,
+    tags:['Uffizi','David · Accademia','Duomo de Brunelleschi','Oltrarno','Ponte Vecchio'],hot:['Nochevieja 🎆'],blue:[],green:[],
+    desc:'Nochevieja en Florencia es espectacular — los fuegos sobre el Arno desde Piazzale Michelangelo son un planazo. Y el 1 de enero los Uffizi con 20 min de cola vs 3 horas es la vida.',
+    tips:['Reservar Uffizi y Accademia en uffizi.it.','Nochevieja en Piazzale Michelangelo para los fuegos sobre la ciudad.','Cenas en Oltrarno — más auténtico y mejor precio.','Lampredotto en Mercato Centrale — el street food florentino más auténtico.']
   },
   {
-    id:7, name:'Cinque Terre', region:'Liguria',
-    dates:'7 Ene', days:'1 día', km:'95 km desde Firenze',
-    lat:44.10, lon:9.73,
-    tags:['Riomaggiore','Manarola','Vernazza'],
-    hot:['Presepe di Manarola'],
-    desc:'En enero las Cinque Terre están casi desiertas — contraste brutal con el caos de verano. El presepe de Manarola (el belén más grande de Italia) se mantiene hasta mediados de enero.',
-    tips:['Dejar el auto en La Spezia y moverse en tren entre pueblos.',
-          'Verificar estado de senderos en cinqueterre.it — cierran con lluvia fuerte.']
+    id:7,name:'Cinque Terre',region:'Liguria',
+    dates:'2 Ene',days:'1 día',km:'95 km desde Firenze',optional:false,
+    lat:44.10,lon:9.73,
+    tags:['Riomaggiore','Manarola','Vernazza'],hot:[],blue:['Presepe di Manarola'],green:[],
+    desc:'En enero las Cinque Terre están casi desiertas. El presepe de Manarola (el belén más grande de Italia) se mantiene hasta mediados de enero.',
+    tips:['Dejar el auto en La Spezia y moverse en tren entre pueblos.','Verificar estado de senderos en cinqueterre.it.']
   },
   {
-    id:8, name:'Pisa', region:'Toscana',
-    dates:'8 Ene', days:'Medio día', km:'80 km desde Cinque Terre',
-    lat:43.72, lon:10.40,
-    tags:['Torre di Pisa','Piazza dei Miracoli','Battistero','Camposanto'],
-    hot:[],
-    desc:'La Piazza dei Miracoli con la Torre, la Catedral y el Baptisterio es genuinamente impresionante. En invierno hay niebla que le da una atmósfera completamente diferente.',
-    tips:['Parking gratuito cerca de la Piazza en enero.',
-          'Entrada combinada Torre + Catedral + Baptisterio en opapisa.it.']
+    id:8,name:'Pisa',region:'Toscana',
+    dates:'3 Ene',days:'Medio día',km:'80 km desde Cinque Terre',optional:false,
+    lat:43.72,lon:10.40,
+    tags:['Torre di Pisa','Piazza dei Miracoli','Battistero'],hot:[],blue:[],green:[],
+    desc:'La Piazza dei Miracoli con la Torre, la Catedral y el Battisterio es genuinamente impresionante. En invierno puede haber niebla, lo que le da una atmósfera diferente.',
+    tips:['Parking gratuito cerca de la Piazza en enero.','Entrada combinada en opapisa.it.']
   },
   {
-    id:9, name:'Siena', region:'Toscana',
-    dates:'9 Ene', days:'1 día', km:'75 km desde Pisa',
-    lat:43.32, lon:11.33,
-    tags:['Piazza del Campo','Duomo de Siena','Val d\'Orcia','SP146'],
-    hot:[],
-    desc:'La ciudad medieval mejor conservada de Italia. Desde ahí, la SP146 por la Val d\'Orcia es una de las rutas en auto más icónicas de Europa — las colinas con cipreses, vacías en enero.',
-    tips:['Recorrer SP146 entre Pienza y San Quirico d\'Orcia — paisaje irrepetible.',
-          'Verificar el piso de mosaicos del Duomo en operaduomo.siena.it.']
+    id:9,name:'Siena',region:'Toscana profunda',
+    dates:'3–4 Ene',days:'1 día',km:'75 km desde Pisa',optional:false,
+    lat:43.32,lon:11.33,
+    tags:['Piazza del Campo','Duomo de Siena','Val d\'Orcia'],hot:[],blue:['SP146 · ruta de cipreses'],green:[],
+    desc:'La Piazza del Campo es la plaza más bonita de Italia. La SP146 por la Val d\'Orcia en auto es imprescindible — las colinas con cipreses, vacías en enero.',
+    tips:['Recorrer SP146 entre Pienza y San Quirico d\'Orcia — paisaje irrepetible.','Verificar el piso de mosaicos del Duomo en operaduomo.siena.it.']
   },
   {
-    id:10, name:'Roma', region:'Lazio',
-    dates:'10–13 Ene', days:'4 días', km:'230 km desde Siena',
-    lat:41.90, lon:12.49,
-    tags:['Coliseo & Foro Romano','Vaticano & Sixtina','Pantheon','Trastevere','Galería Borghese'],
-    hot:[],
-    desc:'En enero el Coliseo tiene colas de 30 min vs 2 horas en agosto. Trastevere en invierno recupera su identidad de barrio. 4 días apenas alcanzan para raspar la superficie.',
-    tips:['Reservar Vaticano en museivaticani.va con 1–2 semanas mínimo.',
-          'No entrar al centro con auto — el ZTL cubre casi todo y la multa es cara.',
-          'Cacio e pepe y carbonara en Trastevere o Testaccio.',
-          'Galería Borghese: 360 personas máx., reservar en galleriaborghese.it.']
+    id:10,name:'Roma',region:'Lazio · La Ciudad Eterna',
+    dates:'5–7 Ene',days:'3 días',km:'230 km desde Siena',optional:false,
+    lat:41.90,lon:12.49,
+    tags:['Coliseo & Foro Romano','Vaticano & Sixtina','Pantheon','Trastevere','Borghese'],hot:['Epifanía 6 Ene 🎉'],blue:[],green:[],
+    desc:'La Epifanía del 6 de enero es la fiesta más importante de Italia — procesiones en el centro histórico y mercados en Piazza Navona. El Coliseo en enero tiene 30 min de cola, no 2 horas.',
+    tips:['Reservar Vaticano en museivaticani.va con 1–2 semanas mínimo.','No entrar al centro con auto — el ZTL cubre casi todo.','Cacio e pepe y carbonara en Trastevere o Testaccio.','Galería Borghese: reservar en galleriaborghese.it.']
   },
   {
-    id:11, name:'Napoli', region:'Campania',
-    dates:'14 Ene', days:'1–2 días', km:'230 km desde Roma',
-    lat:40.85, lon:14.27,
-    tags:['Spaccanapoli','Museo Arqueológico Nac.','Pompeya'],
-    hot:['Pizza en Da Michele'],
+    id:11,name:'Napoli',region:'Campania',
+    dates:'8 Ene',days:'1–2 días',km:'230 km desde Roma',optional:false,
+    lat:40.85,lon:14.27,
+    tags:['Spaccanapoli','Museo Arqueológico Nac.','Pompeya'],hot:['Pizza en Da Michele'],blue:[],green:[],
     desc:'Nápoles es la ciudad más intensa de Italia: caótica, ruidosa, apasionada y con la mejor pizza del mundo. Pompeya queda a 30 minutos en tren y en enero está casi desierta.',
-    tips:['L\'Antica Pizzeria da Michele: sin reserva — llegar antes de las 12:30.',
-          'Pompeya: llevar abrigo, viento frío. Llegar a las 9:00 para estar solos.',
-          'Dejar el auto fuera — metro línea 1 cubre el centro.']
+    tips:['Da Michele: sin reserva — llegar antes de las 12:30.','Pompeya: llevar abrigo, viento frío. Llegar a las 9:00.','Dejar el auto fuera — metro línea 1 cubre el centro.']
   },
   {
-    id:12, name:'Costa Amalfitana', region:'Campania',
-    dates:'15 Ene', days:'1 día', km:'60 km desde Napoli',
-    lat:40.63, lon:14.60,
-    tags:['Positano','Amalfi','Ravello'],
-    hot:['Carretera SS163'],
-    desc:'La SS163 es una de las carreteras más dramáticas de Europa: acantilados verticales, curvas de 180° y el Tirreno de fondo. En enero los pueblos están casi solos.',
-    tips:['Tramos de un solo carril — conducir con calma, ceder a los autobuses.',
-          'Subir a Ravello para la vista panorámica más espectacular de la costa.',
-          'Limoncello y sfogliatella como souvenirs — de productores locales.']
+    id:12,name:'Costa Amalfitana',region:'Campania · Fin de ruta',
+    dates:'9–10 Ene',days:'1–2 días',km:'60 km desde Nápoles',optional:false,
+    lat:40.63,lon:14.60,
+    tags:['Positano','Amalfi','Ravello'],hot:[],blue:['Carretera SS163'],green:[],
+    desc:'La SS163 es una de las carreteras más dramáticas de Europa: acantilados verticales, curvas de 180° y el Mediterráneo abajo. En enero los pueblos están casi solos.',
+    tips:['Tramos de un solo carril — conducir con calma, ceder a los autobuses.','Subir a Ravello para la vista panorámica más espectacular.','Limoncello y sfogliatella de productores locales como souvenirs.']
+  },
+  {
+    id:13,name:'Sicilia',region:'Extensión opcional · +2–3 días',
+    dates:'Desde 10 Ene',days:'2–3 días',km:'Vuelo ~1h desde Nápoles',optional:true,
+    lat:37.60,lon:14.00,
+    tags:['Palermo','Siracusa','Valle dei Templi','Taormina'],hot:[],blue:[],green:['Etna (activo)'],
+    desc:'Si tienes días extra, Sicilia vale completamente el esfuerzo. Es otra Italia: influencias árabes, normandas y griegas, la gastronomía más interesante del país y en enero a 15°C.',
+    tips:['Vuelo corto Nápoles → Palermo o Catania — ~1h desde €30 con Ryanair.','Ferry nocturno Nápoles–Palermo (11h) — económico y experiencia única.','Palermo + Siracusa es el circuito mínimo. Con 3 días agregar Taormina y el Etna.','La arancina en el Mercato Ballarò de Palermo — imprescindible.']
   }
 ];
 
@@ -458,370 +357,258 @@ const CITIES = [
 const canvas = document.getElementById('map-canvas');
 const ctx = canvas.getContext('2d');
 const area = document.getElementById('map-area');
+const GEO = { lonMin:7.2, lonMax:19.0, latMin:36.2, latMax:47.3 };
+let VIEW = { ox:0, oy:0, s:1 };
 
-// Geographic bounds with padding
-const GEO = { lonMin:7.5, lonMax:18.8, latMin:36.5, latMax:47.2 };
-
-// Transform: geo → canvas (will be updated per frame)
-let VIEW = { offsetX:0, offsetY:0, scale:1 };
-let BASE_SCALE = 1;
-
-function geoToNorm(lon, lat){
-  const nx = (lon - GEO.lonMin) / (GEO.lonMax - GEO.lonMin);
-  const ny = 1 - (lat - GEO.latMin) / (GEO.latMax - GEO.latMin);
-  return [nx, ny];
+function geoToNorm(lon,lat){
+  return [(lon-GEO.lonMin)/(GEO.lonMax-GEO.lonMin), 1-(lat-GEO.latMin)/(GEO.latMax-GEO.latMin)];
 }
-function normToCanvas(nx, ny){
-  const W = canvas.width, H = canvas.height;
-  const mapW = W * 0.8, mapH = H * 0.9;
-  const mapX = (W - mapW) / 2, mapY = (H - mapH) / 2;
-  return [
-    VIEW.offsetX + mapX + nx * mapW * VIEW.scale,
-    VIEW.offsetY + mapY + ny * mapH * VIEW.scale
-  ];
+function nToC(nx,ny){
+  const W=canvas.width,H=canvas.height;
+  const mw=W*.78,mh=H*.88,mx=(W-mw)/2,my=(H-mh)/2;
+  return [VIEW.ox+mx+nx*mw*VIEW.s, VIEW.oy+my+ny*mh*VIEW.s];
 }
-function geoToCanvas(lon, lat){
-  return normToCanvas(...geoToNorm(lon, lat));
-}
+function geoToC(lon,lat){ return nToC(...geoToNorm(lon,lat)); }
 
-// Italy mainland outline (geographic coords, simplified)
-const ITALY_MAIN = [
-  // Alps: west to east
+// Italy outline (geographic coords)
+const ITALY=[
   [7.0,44.0],[7.5,44.2],[8.0,44.0],[8.5,44.1],[9.0,44.2],[9.5,45.0],
   [10.0,45.8],[10.5,46.0],[11.0,46.5],[11.5,46.6],[12.0,46.7],[12.5,46.8],
   [13.0,46.6],[13.5,46.3],[13.8,45.8],[13.7,45.7],[13.5,45.7],[13.0,45.5],
-  // Northeast coast (Trieste area)
-  [13.6,45.6],[13.8,45.5],
-  // Adriatic coast south
-  [13.5,45.0],[13.4,44.5],[13.8,44.0],[14.2,43.5],[14.5,42.9],[14.9,42.2],
-  [15.2,41.8],[15.5,41.3],[15.8,40.6],[16.2,40.0],[16.6,39.5],[17.0,39.0],
-  [17.5,38.6],[18.0,38.2],[18.5,38.1],[18.2,38.0],
-  // Heel (Puglia)
+  [13.6,45.6],[13.8,45.5],[13.5,45.0],[13.4,44.5],[13.8,44.0],[14.2,43.5],
+  [14.5,42.9],[14.9,42.2],[15.2,41.8],[15.5,41.3],[15.8,40.6],[16.2,40.0],
+  [16.6,39.5],[17.0,39.0],[17.5,38.6],[18.0,38.2],[18.5,38.1],[18.2,38.0],
   [18.0,38.1],[18.3,38.4],[18.4,38.9],[17.9,39.1],[17.5,39.2],[16.8,39.5],
-  // Toe: Calabria
   [16.5,38.7],[16.0,38.0],[15.7,37.9],[15.6,38.0],[15.9,38.2],[16.1,38.5],
   [16.0,39.0],[15.7,39.5],[15.3,40.0],[15.0,40.3],[14.7,40.6],
-  // Campania coast
   [14.5,40.5],[14.2,40.6],[13.9,40.8],[13.5,41.2],[13.2,41.5],
-  // Lazio coast
   [12.8,41.8],[12.4,42.0],[12.0,42.2],[11.6,42.4],[11.2,42.5],
-  // Tuscany coast
   [10.8,42.6],[10.5,43.0],[10.2,43.3],[9.9,43.8],[9.7,44.2],[9.0,44.0],
-  // Liguria
   [8.5,43.8],[8.0,43.7],[7.5,43.5],[7.0,43.8],[6.8,44.0],[7.0,44.0]
 ];
+const SICILY=[[12.4,38.2],[13.0,37.8],[13.5,37.5],[14.5,37.3],[15.1,37.5],[15.6,37.7],[15.4,38.1],[15.0,38.2],[14.5,38.0],[14.0,38.1],[13.5,38.0],[13.0,38.2],[12.5,38.2],[12.4,38.2]];
+const SARDINIA=[[8.4,38.9],[8.8,38.8],[9.2,39.0],[9.5,39.2],[9.6,39.8],[9.5,40.5],[9.2,41.0],[8.8,41.2],[8.5,41.0],[8.3,40.5],[8.2,40.0],[8.1,39.5],[8.3,39.0],[8.4,38.9]];
 
-const SICILY = [
-  [12.4,38.2],[13.0,37.8],[13.5,37.5],[14.5,37.3],[15.1,37.5],[15.6,37.7],
-  [15.4,38.1],[15.0,38.2],[14.5,38.0],[14.0,38.1],[13.5,38.0],[13.0,38.2],
-  [12.5,38.2],[12.4,38.2]
-];
-
-const SARDINIA = [
-  [8.4,38.9],[8.8,38.8],[9.2,39.0],[9.5,39.2],[9.6,39.8],[9.5,40.5],
-  [9.2,41.0],[8.8,41.2],[8.5,41.0],[8.3,40.5],[8.2,40.0],[8.1,39.5],
-  [8.3,39.0],[8.4,38.9]
-];
-
-function drawIsland(coords, fillA, strokeA){
+function drawLand(pts,fillA,strokeA){
   ctx.beginPath();
-  coords.forEach(([lon,lat],i) => {
-    const [x,y] = geoToCanvas(lon,lat);
-    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-  });
+  pts.forEach(([lon,lat],i)=>{ const[x,y]=geoToC(lon,lat); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
   ctx.closePath();
-  ctx.fillStyle = fillA; ctx.fill();
-  ctx.strokeStyle = strokeA; ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle=fillA; ctx.fill();
+  ctx.strokeStyle=strokeA; ctx.lineWidth=1.5; ctx.stroke();
 }
 
-// Route order (same as CITIES array order)
-let routeProgress = 0; // 0..1 animated
+let routeProg=0;
 
-function draw(){
-  const W = canvas.width, H = canvas.height;
+function drawMap(){
+  const W=canvas.width,H=canvas.height;
   ctx.clearRect(0,0,W,H);
 
-  // Sea background grid — subtle
-  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
-  ctx.lineWidth = 1;
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,0.025)'; ctx.lineWidth=1;
   for(let x=0;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
   for(let y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
 
-  // Mainland
+  drawLand(ITALY,'rgba(255,255,255,0.07)','rgba(255,255,255,0.2)');
+  drawLand(SICILY,'rgba(255,255,255,0.06)','rgba(255,255,255,0.16)');
+  drawLand(SARDINIA,'rgba(255,255,255,0.04)','rgba(255,255,255,0.12)');
+
+  // Mainland route (stops 0–11)
+  const mainCities = CITIES.filter(c=>!c.optional);
+  const n = mainCities.length;
+  const frac = routeProg;
+  const segIdx = Math.min(Math.floor(frac*(n-1)), n-2);
+  const segFrac = (frac*(n-1))%1;
+
+  ctx.save();
+  ctx.strokeStyle='#2563c4'; ctx.lineWidth=2.5;
+  ctx.setLineDash([8,5]); ctx.lineDashOffset=-routeProg*300;
   ctx.beginPath();
-  ITALY_MAIN.forEach(([lon,lat],i) => {
-    const [x,y] = geoToCanvas(lon,lat);
-    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-  });
-  ctx.closePath();
-  ctx.fillStyle = 'rgba(255,255,255,0.07)';
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
+  for(let i=0;i<n-1;i++){
+    const[ax,ay]=geoToC(mainCities[i].lon,mainCities[i].lat);
+    const[bx,by]=geoToC(mainCities[i+1].lon,mainCities[i+1].lat);
+    if(i===0) ctx.moveTo(ax,ay);
+    if(i<segIdx) ctx.lineTo(bx,by);
+    else if(i===segIdx){ ctx.lineTo(ax+(bx-ax)*segFrac,ay+(by-ay)*segFrac); break; }
+  }
+  ctx.stroke(); ctx.restore();
 
-  // Islands
-  drawIsland(SICILY,'rgba(255,255,255,0.05)','rgba(255,255,255,0.15)');
-  drawIsland(SARDINIA,'rgba(255,255,255,0.04)','rgba(255,255,255,0.12)');
-
-  // Route line
-  const n = CITIES.length;
-  const progPts = Math.floor(routeProgress * (n-1));
-  const progFrac = (routeProgress * (n-1)) % 1;
-
-  // Draw solid route for completed segments
-  if(progPts > 0){
+  // Optional Sicily dashed line from Napoli
+  if(routeProg>=1){
+    const napoli = CITIES[10];
+    const sicilia = CITIES[12];
+    const[nx,ny]=geoToC(napoli.lon,napoli.lat);
+    const[sx,sy]=geoToC(sicilia.lon,sicilia.lat);
     ctx.save();
-    ctx.strokeStyle = '#002eff';
-    ctx.lineWidth = 2.5;
-    ctx.setLineDash([8,5]);
-    ctx.lineDashOffset = -routeProgress * 200;
-    ctx.beginPath();
-    for(let i=0;i<=progPts && i<n;i++){
-      const c = CITIES[i];
-      const [x,y] = geoToCanvas(c.lon, c.lat);
-      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-    }
-    // Partial segment
-    if(progPts < n-1){
-      const a = CITIES[progPts], b = CITIES[progPts+1];
-      const [ax,ay] = geoToCanvas(a.lon,a.lat);
-      const [bx,by] = geoToCanvas(b.lon,b.lat);
-      ctx.lineTo(ax+(bx-ax)*progFrac, ay+(by-ay)*progFrac);
-    }
-    ctx.stroke();
+    ctx.strokeStyle='rgba(74,103,65,0.7)'; ctx.lineWidth=1.8;
+    ctx.setLineDash([5,6]);
+    ctx.beginPath(); ctx.moveTo(nx,ny); ctx.lineTo(sx,sy); ctx.stroke();
     ctx.restore();
   }
 }
 
 // ── MARKERS ──
-const markersEl = document.getElementById('markers');
-const markerEls = [];
-
-function updateMarkers(){
-  const W = canvas.width, H = canvas.height;
-  const mapW = W * 0.8, mapH = H * 0.9;
-  const mapX = (W - mapW) / 2, mapY = (H - mapH) / 2;
-
-  CITIES.forEach((city, i) => {
-    const el = markerEls[i];
-    if(!el) return;
-    const [nx,ny] = geoToNorm(city.lon, city.lat);
-    const x = VIEW.offsetX + mapX + nx * mapW * VIEW.scale;
-    const y = VIEW.offsetY + mapY + ny * mapH * VIEW.scale;
-    el.style.left = x + 'px';
-    el.style.top  = y + 'px';
-    const visible = routeProgress >= i / (CITIES.length-1) - 0.01;
-    el.style.opacity = visible ? '1' : '0';
-    el.style.pointerEvents = visible ? 'all' : 'none';
-  });
-}
+const markersEl=document.getElementById('markers');
+const mEls=[];
 
 function buildMarkers(){
-  CITIES.forEach((city, i) => {
-    const el = document.createElement('div');
-    el.className = 'marker';
-    el.innerHTML = `
-      <div class="marker-ring">
-        <div class="marker-dot"></div>
-        <div class="marker-num">${city.id}</div>
-      </div>
-      <div class="marker-label">${city.name.split(' ')[0]}</div>
-    `;
-    el.addEventListener('click', () => openDetail(i));
-    el.addEventListener('mouseenter', (e) => showTooltip(e, city.name));
-    el.addEventListener('mouseleave', hideTooltip);
+  CITIES.forEach((city,i)=>{
+    const el=document.createElement('div');
+    el.className='marker'+(city.optional?' optional-marker':'');
+    el.innerHTML=`<div class="marker-ring"><div class="marker-pip"></div><div class="marker-num">${city.optional?'+':city.id}</div></div><div class="marker-label">${city.name.split(' ')[0]}</div>`;
+    el.addEventListener('click',()=>openDetail(i));
+    el.addEventListener('mouseenter',e=>showTt(e,city.name));
+    el.addEventListener('mouseleave',hideTt);
     markersEl.appendChild(el);
-    markerEls.push(el);
+    mEls.push(el);
   });
 }
 
-let activeCity = -1;
-function setActiveMarker(i){
-  markerEls.forEach((el,j) => el.classList.toggle('active', j===i));
-  document.querySelectorAll('.city-item').forEach((el,j) => el.classList.toggle('active', j===i));
-  document.querySelectorAll('.prog-stop').forEach((el,j) => el.classList.toggle('prog-active', j===i));
-  activeCity = i;
+function updateMarkers(){
+  const W=canvas.width,H=canvas.height;
+  const mw=W*.78,mh=H*.88,mx=(W-mw)/2,my=(H-mh)/2;
+  CITIES.forEach((city,i)=>{
+    const el=mEls[i];
+    if(!el) return;
+    const[nx,ny]=geoToNorm(city.lon,city.lat);
+    const x=VIEW.ox+mx+nx*mw*VIEW.s;
+    const y=VIEW.oy+my+ny*mh*VIEW.s;
+    el.style.left=x+'px'; el.style.top=y+'px';
+    const show = city.optional ? routeProg>=1 : routeProg>=i/(CITIES.filter(c=>!c.optional).length-1)-0.02;
+    el.style.opacity=show?'1':'0';
+    el.style.pointerEvents=show?'all':'none';
+  });
+}
+
+let activeIdx=-1;
+function setActive(i){
+  mEls.forEach((el,j)=>el.classList.toggle('active',j===i));
+  document.querySelectorAll('.city-item').forEach((el,j)=>el.classList.toggle('active',j===i));
+  document.querySelectorAll('.p-stop').forEach((el,j)=>el.classList.toggle('on',j===i));
+  activeIdx=i;
 }
 
 // ── TOOLTIP ──
-const tooltip = document.getElementById('tooltip');
-function showTooltip(e, text){
-  tooltip.textContent = text;
-  tooltip.style.left = e.clientX + 'px';
-  tooltip.style.top  = e.clientY + 'px';
-  tooltip.classList.add('show');
-}
-function hideTooltip(){ tooltip.classList.remove('show') }
+const tt=document.getElementById('tt');
+function showTt(e,text){ tt.textContent=text; tt.style.left=e.clientX+'px'; tt.style.top=e.clientY+'px'; tt.classList.add('show'); }
+function hideTt(){ tt.classList.remove('show'); }
 
-// ── DETAIL PANEL ──
-const detail = document.getElementById('detail');
+// ── DETAIL ──
+const detail=document.getElementById('detail');
 function openDetail(i){
-  const city = CITIES[i];
-  setActiveMarker(i);
-  document.getElementById('d-stop').textContent = `Parada ${String(city.id).padStart(2,'0')} de 12`;
-  document.getElementById('d-city').textContent = city.name;
-  document.getElementById('d-region').textContent = city.region;
-
-  const body = document.getElementById('d-body');
-  const tagsHtml = [
-    ...city.tags.map(t=>`<span class="det-tag">${t}</span>`),
-    ...city.hot.map(t=>`<span class="det-tag h">${t}</span>`)
+  const c=CITIES[i];
+  setActive(i);
+  document.getElementById('d-stop').textContent=c.optional?'Parada Opcional':`Parada ${String(c.id).padStart(2,'0')} de 12`;
+  document.getElementById('d-city').textContent=c.name;
+  document.getElementById('d-region').textContent=c.region;
+  const tagsHtml=[
+    ...c.tags.map(t=>`<span class="d-tag">${t}</span>`),
+    ...c.hot.map(t=>`<span class="d-tag r">${t}</span>`),
+    ...c.blue.map(t=>`<span class="d-tag b">${t}</span>`),
+    ...c.green.map(t=>`<span class="d-tag g">${t}</span>`)
   ].join('');
-
-  body.innerHTML = `
-    <div class="det-row"><span class="det-label">Fechas</span><span class="det-val">${city.dates}</span></div>
-    <div class="det-row"><span class="det-label">Duración</span><span class="det-val">${city.days}</span></div>
-    ${city.km ? `<div class="det-km">↔ ${city.km}</div>` : ''}
-    <div class="det-tags">${tagsHtml}</div>
-    <p class="det-desc">${city.desc}</p>
-    <div class="det-tips">${city.tips.map(t=>`<div class="det-tip"><span class="det-arr">→</span>${t}</div>`).join('')}</div>
+  const body=document.getElementById('d-body');
+  body.innerHTML=`
+    ${c.optional?'<div class="d-opt-badge">Extensión opcional</div>':''}
+    <div class="d-row"><span class="d-lbl">Fechas</span><span class="d-val">${c.dates}</span></div>
+    <div class="d-row"><span class="d-lbl">Duración</span><span class="d-val">${c.days}</span></div>
+    ${c.km?`<div class="d-km">↔ ${c.km}</div>`:''}
+    <div class="d-tags">${tagsHtml}</div>
+    <p class="d-desc">${c.desc}</p>
+    <div class="d-tips">${c.tips.map(t=>`<div class="d-tip"><span class="d-arr">→</span>${t}</div>`).join('')}</div>
   `;
-
   detail.classList.add('open');
-  document.getElementById('nav-prev').disabled = i===0;
-  document.getElementById('nav-next').disabled = i===CITIES.length-1;
-  document.getElementById('nav-prev').style.opacity = i===0 ? '.3' : '1';
-  document.getElementById('nav-next').style.opacity = i===CITIES.length-1 ? '.3' : '1';
+  const prev=document.getElementById('n-prev');
+  const next=document.getElementById('n-next');
+  prev.disabled=i===0;
+  next.disabled=i===CITIES.length-1;
 }
+document.getElementById('det-back').addEventListener('click',()=>{ detail.classList.remove('open'); setActive(-1); });
+document.getElementById('n-prev').addEventListener('click',()=>{ if(activeIdx>0) openDetail(activeIdx-1); });
+document.getElementById('n-next').addEventListener('click',()=>{ if(activeIdx<CITIES.length-1) openDetail(activeIdx+1); });
 
-document.getElementById('detail-back').addEventListener('click', () => {
-  detail.classList.remove('open');
-  setActiveMarker(-1);
-});
-document.getElementById('nav-prev').addEventListener('click', () => {
-  if(activeCity > 0) openDetail(activeCity - 1);
-});
-document.getElementById('nav-next').addEventListener('click', () => {
-  if(activeCity < CITIES.length-1) openDetail(activeCity + 1);
-});
-
-// ── CITY LIST ──
-function buildCityList(){
-  const list = document.getElementById('city-list');
-  CITIES.forEach((city, i) => {
-    const el = document.createElement('div');
-    el.className = 'city-item';
-    el.innerHTML = `
-      <div class="city-item-num">${String(city.id).padStart(2,'0')}</div>
-      <div class="city-item-info">
-        <div class="city-item-name">${city.name}</div>
-        <div class="city-item-date">${city.dates}</div>
+// ── CITY LIST & PROGRESS ──
+function buildList(){
+  const list=document.getElementById('city-list');
+  CITIES.forEach((c,i)=>{
+    const el=document.createElement('div');
+    el.className='city-item'+(c.optional?' optional-item':'');
+    el.innerHTML=`
+      <div class="c-num">${c.optional?'+':String(c.id).padStart(2,'0')}</div>
+      <div class="c-info">
+        <div class="c-name">${c.name}${c.optional?'<span class="opt-pill">opcional</span>':''}</div>
+        <div class="c-date">${c.dates}</div>
       </div>
-      <div class="city-item-days">${city.days}</div>
+      <div class="c-days">${c.days}</div>
     `;
-    el.addEventListener('click', () => openDetail(i));
+    el.addEventListener('click',()=>openDetail(i));
     list.appendChild(el);
   });
 }
 
-// ── PROGRESS BAR ──
 function buildProgress(){
-  const prog = document.getElementById('route-progress');
-  CITIES.forEach((city, i) => {
-    if(i > 0){
-      const line = document.createElement('div');
-      line.className='prog-line';
-      prog.appendChild(line);
-    }
-    const stop = document.createElement('div');
-    stop.className = 'prog-stop';
-    stop.innerHTML = `<div class="prog-dot"></div><div class="prog-num">${String(city.id).padStart(2,'0')}</div>`;
-    stop.addEventListener('click', () => openDetail(i));
-    prog.appendChild(stop);
+  const prog=document.getElementById('progress');
+  CITIES.forEach((c,i)=>{
+    if(i>0){ const l=document.createElement('div'); l.className='p-line'; prog.appendChild(l); }
+    const s=document.createElement('div');
+    s.className='p-stop'+(c.optional?' optional':'');
+    s.innerHTML=`<div class="p-dot"></div><div class="p-n">${c.optional?'+':String(c.id).padStart(2,'0')}</div>`;
+    s.addEventListener('click',()=>openDetail(i));
+    prog.appendChild(s);
   });
 }
 
 // ── ZOOM / PAN ──
-let isDragging = false, dragStart = {x:0,y:0}, dragOrig = {x:0,y:0};
-
-canvas.addEventListener('mousedown', e => {
-  isDragging=true; dragStart={x:e.clientX,y:e.clientY};
-  dragOrig={x:VIEW.offsetX,y:VIEW.offsetY};
-  canvas.classList.add('dragging');
-});
-window.addEventListener('mousemove', e => {
-  if(!isDragging) return;
-  VIEW.offsetX = dragOrig.x + (e.clientX - dragStart.x);
-  VIEW.offsetY = dragOrig.y + (e.clientY - dragStart.y);
-  draw(); updateMarkers();
-});
-window.addEventListener('mouseup', () => { isDragging=false; canvas.classList.remove('dragging') });
-
-canvas.addEventListener('wheel', e => {
+let dragging=false,ds={x:0,y:0},do_={ox:0,oy:0};
+canvas.addEventListener('mousedown',e=>{ dragging=true; ds={x:e.clientX,y:e.clientY}; do_={ox:VIEW.ox,oy:VIEW.oy}; canvas.classList.add('drag'); });
+window.addEventListener('mousemove',e=>{ if(!dragging) return; VIEW.ox=do_.ox+(e.clientX-ds.x); VIEW.oy=do_.oy+(e.clientY-ds.y); drawMap(); updateMarkers(); });
+window.addEventListener('mouseup',()=>{ dragging=false; canvas.classList.remove('drag'); });
+canvas.addEventListener('wheel',e=>{
   e.preventDefault();
-  const factor = e.deltaY < 0 ? 1.12 : 0.88;
-  const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-  VIEW.offsetX = mx - (mx - VIEW.offsetX) * factor;
-  VIEW.offsetY = my - (my - VIEW.offsetY) * factor;
-  VIEW.scale *= factor;
-  VIEW.scale = Math.min(Math.max(VIEW.scale, 0.5), 5);
-  draw(); updateMarkers();
-}, {passive:false});
+  const f=e.deltaY<0?1.12:0.89;
+  const r=canvas.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+  VIEW.ox=mx-(mx-VIEW.ox)*f; VIEW.oy=my-(my-VIEW.oy)*f;
+  VIEW.s=Math.min(Math.max(VIEW.s*f,.45),5);
+  drawMap(); updateMarkers();
+},{passive:false});
 
-// Touch
-let lastTouchDist = 0, touchStart = null;
-canvas.addEventListener('touchstart', e => {
-  if(e.touches.length===1){
-    touchStart = {x:e.touches[0].clientX,y:e.touches[0].clientY,ox:VIEW.offsetX,oy:VIEW.offsetY};
-  } else if(e.touches.length===2){
-    lastTouchDist = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
-  }
+let ltd=0,tst=null;
+canvas.addEventListener('touchstart',e=>{
+  if(e.touches.length===1){ tst={x:e.touches[0].clientX,y:e.touches[0].clientY,ox:VIEW.ox,oy:VIEW.oy}; }
+  else if(e.touches.length===2){ ltd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY); }
 },{passive:true});
-canvas.addEventListener('touchmove', e => {
-  if(e.touches.length===1 && touchStart){
-    VIEW.offsetX = touchStart.ox + e.touches[0].clientX - touchStart.x;
-    VIEW.offsetY = touchStart.oy + e.touches[0].clientY - touchStart.y;
-    draw(); updateMarkers();
-  } else if(e.touches.length===2){
-    const d = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
-    VIEW.scale *= d/lastTouchDist;
-    VIEW.scale = Math.min(Math.max(VIEW.scale,0.5),5);
-    lastTouchDist = d;
-    draw(); updateMarkers();
-  }
+canvas.addEventListener('touchmove',e=>{
+  if(e.touches.length===1&&tst){ VIEW.ox=tst.ox+(e.touches[0].clientX-tst.x); VIEW.oy=tst.oy+(e.touches[0].clientY-tst.y); drawMap(); updateMarkers(); }
+  else if(e.touches.length===2){ const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY); VIEW.s=Math.min(Math.max(VIEW.s*d/ltd,.45),5); ltd=d; drawMap(); updateMarkers(); }
   e.preventDefault();
 },{passive:false});
 
-document.getElementById('zoom-in').addEventListener('click', () => {
-  VIEW.scale = Math.min(VIEW.scale*1.25, 5); draw(); updateMarkers();
-});
-document.getElementById('zoom-out').addEventListener('click', () => {
-  VIEW.scale = Math.max(VIEW.scale*0.8, 0.5); draw(); updateMarkers();
-});
-document.getElementById('reset-view').addEventListener('click', () => {
-  VIEW.offsetX=0; VIEW.offsetY=0; VIEW.scale=1; draw(); updateMarkers();
-});
+document.getElementById('zi').addEventListener('click',()=>{ VIEW.s=Math.min(VIEW.s*1.25,5); drawMap(); updateMarkers(); });
+document.getElementById('zo').addEventListener('click',()=>{ VIEW.s=Math.max(VIEW.s*.8,.45); drawMap(); updateMarkers(); });
+document.getElementById('zr').addEventListener('click',()=>{ VIEW.ox=0; VIEW.oy=0; VIEW.s=1; drawMap(); updateMarkers(); });
 
 // ── RESIZE ──
 function resize(){
-  const rect = area.getBoundingClientRect();
-  canvas.width  = rect.width;
-  canvas.height = rect.height;
-  draw(); updateMarkers();
+  const r=area.getBoundingClientRect();
+  canvas.width=r.width; canvas.height=r.height;
+  drawMap(); updateMarkers();
 }
-const ro = new ResizeObserver(resize);
-ro.observe(area);
+new ResizeObserver(resize).observe(area);
 
-// ── ANIMATE ROUTE ──
-function animateRoute(){
-  const duration = 2600; // ms
-  const start = performance.now();
+// ── ANIMATE ──
+function animate(){
+  const t0=performance.now();
+  const dur=2800;
   function step(now){
-    routeProgress = Math.min((now-start)/duration, 1);
-    draw(); updateMarkers();
-    if(routeProgress < 1) requestAnimationFrame(step);
+    routeProg=Math.min((now-t0)/dur,1);
+    drawMap(); updateMarkers();
+    if(routeProg<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
 
-// ── INIT ──
-buildMarkers();
-buildCityList();
-buildProgress();
+buildMarkers(); buildList(); buildProgress();
 resize();
-setTimeout(animateRoute, 300);
+setTimeout(animate,300);
 </script>
 </body>
 </html>
