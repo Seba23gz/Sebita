@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Italia Roadtrip — Dic 2025 / Ene 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Barlow+Condensed:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d1219;
+  --parchment:#f0ebe0;
+  --sand:#e3ddd0;
+  --stone:#9a8e80;
+  --route:#002eff;
+  --fire:#ff3d00;
+  --mint:#41e8b4;
+  --white:#ffffff;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--parchment);color:var(--ink);overflow-x:hidden}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;
+  background:var(--ink);
+  display:grid;
+  grid-template-columns:1fr 420px;
+  position:relative;
+  overflow:hidden;
+}
+.hero-text{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:80px 64px;position:relative;z-index:2;
+}
+.hero-eyebrow{
+  font-size:11px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--mint);margin-bottom:28px;
+}
+.hero-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(72px,11vw,148px);
+  font-weight:900;line-height:.88;color:var(--white);text-wrap:balance;
+}
+.hero-title .fire{color:var(--fire)}
+.hero-subtitle{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(18px,2.5vw,28px);font-weight:300;font-style:italic;
+  color:var(--stone);margin-top:20px;letter-spacing:.03em;
+}
+.hero-meta{margin-top:44px;display:flex;flex-direction:column;gap:10px}
+.meta-item{
+  display:flex;align-items:center;gap:12px;
+  font-size:14px;font-weight:400;color:rgba(255,255,255,.65);
+}
+.meta-dot{width:5px;height:5px;background:var(--fire);border-radius:50%;flex-shrink:0}
+.hero-cta{margin-top:52px}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--route);color:var(--white);
+  font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:14px 28px;text-decoration:none;transition:background .18s;
+}
+.btn:hover{background:#0022cc}
+.btn:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+.hero-canvas{
+  display:flex;align-items:center;justify-content:center;
+  padding:40px 40px 40px 0;
+}
+#italy-canvas{width:100%;max-width:380px;height:auto}
+
+/* ── ROUTE STRIP ── */
+.strip{background:var(--route);overflow-x:auto;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.strip-inner{
+  display:flex;align-items:stretch;min-width:max-content;padding:0 40px;
+}
+.strip-city{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:18px 26px;position:relative;
+  color:rgba(255,255,255,.65);font-size:10px;font-weight:600;
+  letter-spacing:.15em;text-transform:uppercase;text-decoration:none;
+  transition:color .15s;
+}
+.strip-city:hover{color:var(--white)}
+.strip-city+.strip-city::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:1px;height:20px;background:rgba(255,255,255,.2);
+}
+.strip-num{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px;font-weight:800;color:var(--white);
+  font-variant-numeric:tabular-nums;
+}
+
+/* ── INTRO ── */
+.intro{
+  padding:112px 64px 80px;max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;
+}
+.intro-heading{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(34px,4.5vw,60px);font-weight:800;line-height:1.02;text-wrap:balance;
+}
+.intro-heading .blue{color:var(--route)}
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+  margin-top:48px;border-top:1px solid var(--sand);padding-top:36px;
+}
+.stat-n{
+  font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;
+  line-height:1;font-variant-numeric:tabular-nums;
+}
+.stat-l{font-size:11px;color:var(--stone);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-top:4px}
+.intro-copy{font-size:15px;line-height:1.78;color:#3d3530}
+.intro-copy p+p{margin-top:14px}
+
+/* ── SECTION LABELS ── */
+.s-label{font-size:10px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--fire);margin-bottom:10px}
+.s-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,3.5vw,44px);font-weight:800}
+
+/* ── JOURNEY / TIMELINE ── */
+.journey{padding:80px 0 120px}
+.journey-head{padding:0 64px 56px;max-width:1200px;margin:0 auto}
+.timeline{max-width:1200px;margin:0 auto;padding:0 64px;position:relative}
+.timeline::before{
+  content:'';position:absolute;
+  left:calc(64px + 27px);top:0;bottom:0;
+  width:2px;background:linear-gradient(to bottom,var(--route) 90%,transparent);
+}
+.stop{
+  display:grid;grid-template-columns:54px 1fr;gap:36px;
+  margin-bottom:60px;position:relative;
+}
+.stop-dot{
+  width:54px;height:54px;border-radius:50%;
+  border:2px solid var(--route);background:var(--parchment);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;
+  color:var(--route);font-variant-numeric:tabular-nums;
+  position:relative;z-index:1;flex-shrink:0;
+}
+.stop:first-child .stop-dot,
+.stop:last-child .stop-dot{background:var(--route);color:var(--white)}
+.stop-body{padding-bottom:44px;border-bottom:1px solid var(--sand)}
+.stop:last-child .stop-body{border-bottom:none}
+.stop-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:16px;flex-wrap:wrap}
+.stop-city{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(30px,4vw,52px);font-weight:900;line-height:1;text-transform:uppercase;
+}
+.stop-region{font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--stone);margin-top:5px}
+.stop-when{text-align:right;flex-shrink:0}
+.stop-date{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700}
+.stop-days{font-size:12px;color:var(--stone);font-weight:500;margin-top:2px}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+.tag{
+  background:var(--sand);color:var(--ink);
+  font-size:12px;font-weight:500;padding:4px 11px;letter-spacing:.02em;
+}
+.tag.hot{background:var(--fire);color:var(--white)}
+.tag.blue{background:var(--route);color:var(--white)}
+.stop-desc{font-size:15px;line-height:1.75;color:#3d3530;max-width:640px}
+.stop-tips{margin-top:14px;display:flex;flex-direction:column;gap:7px}
+.tip{display:flex;gap:10px;font-size:13px;color:#5a4f47;line-height:1.55}
+.tip-arr{color:var(--route);flex-shrink:0;margin-top:1px;font-weight:700}
+.km{
+  display:inline-flex;align-items:center;gap:6px;margin-top:12px;
+  background:#e8eeff;color:var(--route);
+  font-size:11px;font-weight:700;letter-spacing:.06em;padding:4px 10px;
+  font-variant-numeric:tabular-nums;
+}
+
+/* ── WINTER TIPS ── */
+.winter{background:var(--ink);color:var(--white);padding:100px 64px}
+.winter-inner{max-width:1200px;margin:0 auto}
+.winter .s-label{color:var(--mint)}
+.winter .s-title{color:var(--white);margin-bottom:56px}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:28px}
+.tip-card{border-top:2px solid rgba(255,255,255,.12);padding-top:22px}
+.tip-icon{font-size:26px;margin-bottom:14px}
+.tip-card h3{
+  font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;
+  margin-bottom:10px;color:var(--white);
+}
+.tip-card p{font-size:13px;line-height:1.72;color:rgba(255,255,255,.55)}
+
+/* ── PRACTICAL ── */
+.practical{padding:100px 64px;max-width:1200px;margin:0 auto}
+.prac-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:56px}
+.prac-block h3{
+  font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;
+  margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--route);
+}
+.prac-list{list-style:none;display:flex;flex-direction:column;gap:0}
+.prac-list li{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-size:13px;padding:10px 0;border-bottom:1px solid var(--sand);gap:16px;
+}
+.prac-list li span:first-child{color:#4a4038}
+.prac-list li span:last-child{font-weight:700;color:var(--ink);text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
+.prac-list li.total span{color:var(--route)}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--route);color:var(--white);
+  padding:44px 64px;display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:20px;
+}
+.footer-name{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900}
+.footer-sub{font-size:13px;opacity:.65;margin-top:4px}
+.footer-note{font-size:13px;opacity:.55;text-align:right}
+
+/* ── ANIMATIONS ── */
+.fade-up{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
+.fade-up.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.fade-up{opacity:1;transform:none;transition:none}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  .hero{grid-template-columns:1fr}
+  .hero-canvas{display:none}
+  .hero-text{padding:64px 32px}
+  .intro{grid-template-columns:1fr;gap:40px;padding:80px 32px 60px}
+  .timeline{padding:0 32px}
+  .timeline::before{left:calc(32px + 27px)}
+  .journey-head{padding:0 32px 48px}
+  .winter{padding:80px 32px}
+  .practical{padding:80px 32px}
+  .prac-grid{grid-template-columns:1fr;gap:36px}
+  footer{padding:40px 32px;flex-direction:column;text-align:center}
+  .footer-note{text-align:center}
+  .stats{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:600px){
+  .stop{grid-template-columns:40px 1fr;gap:18px}
+  .stop-dot{width:40px;height:40px;font-size:12px}
+  .timeline::before{left:calc(32px + 20px)}
+  .stop-head{flex-direction:column}
+  .stop-when{text-align:left}
+  .stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <p class="hero-eyebrow">Roadtrip · Diciembre 2025 — Enero 2026</p>
+    <h1 class="hero-title">IT<span class="fire">A</span>LIA<br>DE NORTE<br>A SUR</h1>
+    <p class="hero-subtitle">Milano → Costa Amalfitana, en invierno</p>
+    <div class="hero-meta">
+      <div class="meta-item"><span class="meta-dot"></span>12 ciudades · 21 días</div>
+      <div class="meta-item"><span class="meta-dot"></span>~2.100 km en auto</div>
+      <div class="meta-item"><span class="meta-dot"></span>Navidad, Año Nuevo &amp; Epifanía en Italia</div>
+    </div>
+    <div class="hero-cta">
+      <a href="#itinerario" class="btn">Ver itinerario completo →</a>
+    </div>
+  </div>
+  <div class="hero-canvas">
+    <canvas id="italy-canvas" width="360" height="560"></canvas>
+  </div>
+</section>
+
+<!-- ROUTE STRIP -->
+<nav class="strip" aria-label="Ciudades del roadtrip">
+  <div class="strip-inner">
+    <a href="#stop-1" class="strip-city"><span class="strip-num">01</span>Milano</a>
+    <a href="#stop-2" class="strip-city"><span class="strip-num">02</span>Como</a>
+    <a href="#stop-3" class="strip-city"><span class="strip-num">03</span>Verona</a>
+    <a href="#stop-4" class="strip-city"><span class="strip-num">04</span>Venezia</a>
+    <a href="#stop-5" class="strip-city"><span class="strip-num">05</span>Bologna</a>
+    <a href="#stop-6" class="strip-city"><span class="strip-num">06</span>Firenze</a>
+    <a href="#stop-7" class="strip-city"><span class="strip-num">07</span>Cinque Terre</a>
+    <a href="#stop-8" class="strip-city"><span class="strip-num">08</span>Pisa</a>
+    <a href="#stop-9" class="strip-city"><span class="strip-num">09</span>Siena</a>
+    <a href="#stop-10" class="strip-city"><span class="strip-num">10</span>Roma</a>
+    <a href="#stop-11" class="strip-city"><span class="strip-num">11</span>Napoli</a>
+    <a href="#stop-12" class="strip-city"><span class="strip-num">12</span>Amalfi</a>
+  </div>
+</nav>
+
+<!-- INTRO -->
+<section class="intro">
+  <div>
+    <h2 class="intro-heading">El invierno más<br>lindo de <span class="blue">Europa.</span></h2>
+    <div class="stats">
+      <div><div class="stat-n">21</div><div class="stat-l">Días de viaje</div></div>
+      <div><div class="stat-n">12</div><div class="stat-l">Ciudades</div></div>
+      <div><div class="stat-n">2.100</div><div class="stat-l">Kilómetros</div></div>
+    </div>
+  </div>
+  <div class="intro-copy">
+    <p>Italia en diciembre y enero es otro país. Sin turistas masivos, los museos con colas de 20 minutos en vez de 3 horas, los hoteles a mitad de precio, y una luz de invierno que hace que cada ciudad se vea como una película italiana de los años 60.</p>
+    <p>La ruta baja la bota de norte a sur en auto: desde la niebla milanesa de Navidad hasta el sol del sur en la Costa Amalfitana. Mezcla ciudades de arte, costa de Liguria, Toscana profunda e intensidad napolitana.</p>
+    <p>El viaje tiene tres fiestas italianas integradas: Navidad en el norte, Capodanno (Año Nuevo) en Venecia, y la Epifanía del 6 de enero — la fiesta más importante del calendario italiano.</p>
+  </div>
+</section>
+
+<!-- ITINERARIO -->
+<section class="journey" id="itinerario">
+  <div class="journey-head">
+    <p class="s-label">La Ruta Completa</p>
+    <h2 class="s-title">Itinerario día a día</h2>
+  </div>
+
+  <div class="timeline">
+
+    <!-- 01 MILANO -->
+    <div class="stop fade-up" id="stop-1">
+      <div class="stop-dot">01</div>
+      <div class="stop-body">
+        <div class="stop-head">
+          <div>
+            <div class="stop-city">Milano</div>
+            <div class="stop-region">Lombardía · Punto de entrada</div>
+          </div>
+          <div class="stop-when">
+            <div class="stop-date">26 – 28 Dic</div>
+            <div class="stop-days">3 días</div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Duomo di Milano</span>
+          <span class="tag">Galleria V.E. II</span>
+          <span class="tag">Castello Sforzesco</span>
+          <span class="tag">La Última Cena</span>
+          <span class="tag">Brera</span>
+          <span class="tag hot">Mercados de Navidad</span>
+        </div>
+        <p class="stop-desc">Milán en Navidad es una ciudad diferente. El Duomo iluminado, los mercados del Castello y la Galleria decorada son de otro nivel. Llegar el 26 para evitar el caos del 24–25 y aprovechar las rebajas post-Navidad. La Última Cena está en el convento de Santa Maria delle Grazie — reservar con meses de anticipación.</p>
+        <div class="stop-tips">
+          <div class="tip"><span class="tip-arr">→</span>Reservar Cenacolo Vinciano (La Última Cena) online con 2–3 meses de anticipación. Solo 25 personas por turno de 15 min.</div>
+          <div class="tip"><span class="tip-arr">→</span>Navigli para aperitivo, Brera para galerías, Peck para compras gourmet de embutidos y quesos.</div>
+          <div class="tip"><span class="tip-arr">→</span>Dejar el auto en el parking del hotel. El metro M1/M2/M3 cubre todo el centro.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 COMO -->
+    <div class="stop fade-up" id="stop-2">
+      <div class="stop-dot">02</div>
+      <div class="stop-body">
+        <div class="stop-head">
+          <div>
+            <div class="stop-city">Lago di Como</div>
+            <div class="stop-region">Lombardía</div>
+          </div>
+          <div class="stop-when">
+            <div class="stop-date">29 Dic</div>
+            <div class="stop-days">1 día · excursión</div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Bellagio</span>
+          <span class="tag">Varenna</span>
+          <span class="tag">Ferry del lago</span>
+          <span class="tag">Villa Carlotta</span>
+        </div>
+        <p class="stop-desc">El Lago de Como en invierno tiene una calma absoluta. Los pueblos de la orilla están casi sin turistas y la neblina matinal sobre el agua es un espectáculo. Bellagio es el must — sus callejuelas empinadas y las vistas al lago en invierno son irrepetibles.</p>
+        <div class="stop-tips">
+          <div class="tip"><span class="tip-arr">→</span>Salir temprano desde Milán (45 min en auto) para aprovechar la luz de la mañana antes de la niebla.</div>
+          <div class="tip"><span class="tip-arr">→</span>Ferry Bellagio–Varenna–Menaggio: verificar horario de invierno en navigazionelaghi.it.</div>
+        </div>
+        <div class="km">↔ 45 km desde Milano</div>
+      </div>
+    </div>
+
+    <!-- 03 VERONA -->
+    <div class="stop fade-up" id="stop-3">
+      <div class="stop-dot">03</div>
+      <div class="stop-body">
+        <div class="stop-head">
+          <div>
+            <div class="stop-city">Verona</div>
+            <div class="stop-region">Veneto</div>
+          </div>
+          <div class="stop-when">
+            <div class="stop-date">30 Dic</div>
+            <div class="stop-days">1 día · parada en ruta</div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Arena di Verona</span>
+          <span class="tag">Casa di Giulietta</span>
+          <span class="tag">Piazza delle Erbe</span>
+          <span class="tag">Ponte Pietra</span>
+        </div>
+        <p class="stop-desc">Perfecta como parada de medio día entre Milán y Venecia. La Arena romana, el casco medieval y la leyenda de Romeo y Julieta están todo a caminata. Una hora desde Milán en autopista.</p>
+        <div class="stop-tips">
+          <div class="tip"><span class="tip-arr">→</span>Aparcar en Parcheggio Arena (frente al anfiteatro) y hacer todo el centro a pie.</div>
+          <div class="tip"><span class="tip-arr">→</span>Almorzar en Piazza delle Erbe antes de seguir a Venezia — los restaurantes del perímetro son buenos.</div>
+        </div>
+        <div class="km">↔ 155 km desde Milano</div>
+      </div>
+    </div>
+
+    <!-- 04 VENEZIA -->
+    <div class="stop fade-up" id="stop-4">
+      <div class="stop-dot">04</div>
+      <div class="stop-body">
+        <div class="stop-head">
+          <div>
+            <div class="stop-city">Venezia</div>
+            <div class="stop-region">Veneto</div>
+          </div>
+          <div class="stop-when">
+            <div class="stop-date">31 Dic – 2 Ene</div>
+            <div class="stop-days">3 días · Año Nuevo</div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Piazza San Marco</span>
+          <span class="tag">Basílica di San Marco</span>
+          <span class="tag">Rialto</span>
+          <span class="tag">Dorsoduro</span>
+          <span class="tag">Burano</span>
+          <span class="tag hot">Capodanno 🎆</span>
+        </div>
+        <p class="stop-desc">Año Nuevo en Venecia es una experiencia única — los fuegos artificiales sobre la laguna desde Piazza San Marco son espectaculares. Venecia en invierno es su versión más auténtica: menos turistas, posible acqua alta, y una atmósfera casi fantasmal que en verano es imposible de ver. El 1 de enero: vaporetto a Burano, absolutamente vacío.</p>
+        <div class="stop-tips">
+          <div class="tip"><span class="tip-arr">→</span>Dejar el auto en Piazzale Roma o Tronchetto — en Venecia no circulan autos.</div>
+          <div class="tip"><span class="tip-arr">→</span>Comprar stivali di gomma (botas de agua) si hay previsión de acqua alta. Las venden en todo lado.</div>
+          <div class="tip"><span class="tip-arr">→</span>Comer cicchetti en los bacari del Rialto — la versión veneciana del tapeo, barato y auténtico.</div>
+          <div class="tip"><span class="tip-arr">→</span>Evitar los restaurantes de Piazza San Marco — marcan el doble por la ubicación.</div>
+        </div>
+        <div class="km">↔ 265 km desde Milano</div>
+      </div>
+    </div>
+
+    <!-- 05 BOLOGNA -->
+    <div class="stop fade-up" id="stop-5">
+      <div class="stop-dot">05</div>
+      <div class="stop-body">
+        <div class="stop-head">
+          <div>
+            <div class="stop-city">Bologna</div>
+            <div class="stop-region">Emilia-Romagna</div>
+          </div>
+          <div class="stop-when">
+            <div class="stop-date">3 Ene</div>
+            <div class="stop-days">1 día · capital gastronómica</div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Mercato Quadrilatero</span>
+          <span class="tag">Piazza Maggiore</span>
+          <span class="tag">Due Torri</span>
+          <span class="tag hot">Tagliatelle al ragù auténtico</span>
+        </div>
+        <p class="stop-desc">Bologna la Grassa — la ciudad más gorda de Italia y el mejor cumplido que le puedes hacer. El mercado del Quadrilatero es uno de los mejores de Europa para comprar mortadela, parmesano y prosciutto. Una tarde aquí se resume en: comer, comer bien y comer mucho.</p>
+        <div class="stop-tips">
+          <div class="tip"><span class="tip-arr">→</span>Tagliatelle al ragù en una osteria tradicional. No llamarle "boloñesa" — en Bolonia eso ofende.</div>
+          <div class="tip"><span class="tip-arr">→</span>Subir las Due Torri (Torre Asinelli) para la mejor vista de la ciudad.</div>
+        </div>
+        <div class="km">↔ 155 km desde Venezia</div>
+      </div>
+    </div>
+
+    <!-- 06 FIRENZE -->
+    <div class="stop fade-up" id="stop-6">
+      <div class="stop-dot">06</div>
+      <div class="stop-body">
+        <div class="stop-head">
+          <div>
+            <div class="stop-city">Firenze</div>
+            <div class="stop-region">Toscana</div>
+          </div>
+          <div class="stop-when">
+            <div class="stop-date">4 – 6 Ene</div>
+            <div class="stop-days">3 días · Renacimiento</div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Uffizi</span>
+          <span class="tag">David · Accademia</span>
+          <span class="tag">Duomo de Brunelleschi</span>
+          <span class="tag">Oltrarno</span>
+          <span class="tag">Ponte Vecchio</span>
+          <span class="tag hot">Epifanía 6 Ene</span>
+        </div>
+        <p class="stop-desc">Florencia en enero tiene colas de 20 minutos en los Uffizi versus 3 horas en verano. Es el momento ideal para ver el David, la cúpula de Brunelleschi y el Corridoio Vasariano sin el caos habitual. La Epifanía del 6 de enero es fiesta mayor en Italia — procesiones, mercados y los niños reciben regalos ese día, no el 25.</p>
+        <div class="stop-tips">
+          <div class="tip"><span class="tip-arr">→</span>Reservar Uffizi y Accademia en uffizi.it — incluso en temporada baja conviene.</div>
+          <div class="tip"><span class="tip-arr">→</span>Subir al Piazzale Michelangelo al amanecer: la ciudad en la niebla sin nadie alrededor.</div>
+          <div class="tip"><span class="tip-arr">→</span>Cenas en el barrio Oltrarno — más auténtico y mejor precio que el circuito turístico.</div>
+          <div class="tip"><span class="tip-arr">→</span>Lampredotto (callos de ternera) en el Mercato Centrale — el street food florentino más real.</div>
+        </div>
+        <div class="km">↔ 105 km desde Bologna</div>
+      </div>
+    </div>
+
+    <!-- 07 CINQUE TERRE -->
+    <div class="stop fade-up" id="stop-7">
+      <div class="stop-dot">07</div>
+      <div class="stop-body">
+        <div class="stop-head">
+          <div>
+            <div class="stop-city">Cinque Terre</div>
+            <div class="stop-region">Liguria</div>
+          </div>
+          <div class="stop-when">
+            <div class="stop-date">7 Ene</div>
+            <div class="stop-days">1 día</div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Riomaggiore</span>
+          <span class="tag">Manarola</span>
+          <span class="tag">Vernazza</span>
+          <span class="tag blue">Presepe di Manarola</span>
+        </div>
+        <p class="stop-desc">En enero las Cinque Terre están casi desiertas — un contraste brutal con el caos de verano. Algunos senderos costeros pueden estar cerrados por lluvia, pero el tren entre los cinco pueblos funciona siempre. El presepe de Manarola (el belén más grande de Italia, iluminado en la roca) se mantiene hasta mediados de enero.</p>
+        <div class="stop-tips">
+          <div class="tip"><span class="tip-arr">→</span>Dejar el auto en La Spezia (parking cubierto) y moverse en tren entre pueblos.</div>
+          <div class="tip"><span class="tip-arr">→</span>Verificar estado de senderos en cinqueterre.it antes de ir — cierran con lluvia fuerte.</div>
+        </div>
+        <div class="km">↔ 95 km desde Firenze</div>
+      </div>
+    </div>
+
+    <!-- 08 PISA -->
+    <div class="stop fade-up" id="stop-8">
+      <div class="stop-dot">08</div>
+      <div class="stop-body">
+        <div class="stop-head">
+          <div>
+            <div class="stop-city">Pisa</div>
+            <div class="stop-region">Toscana</div>
+          </div>
+          <div class="stop-when">
+            <div class="stop-date">8 Ene</div>
+            <div class="stop-days">Medio día · de paso</div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Torre di Pisa</span>
+          <span class="tag">Piazza dei Miracoli</span>
+          <span class="tag">Battistero</span>
+          <span class="tag">Camposanto</span>
+        </div>
+        <p class="stop-desc">Pisa merece medio día — la Piazza dei Miracoli con la Torre, la Catedral y el Baptisterio es genuinamente impresionante. En invierno hay niebla a veces, lo que le da una atmósfera completamente diferente. Subir la Torre requiere reserva previa.</p>
+        <div class="stop-tips">
+          <div class="tip"><span class="tip-arr">→</span>Parking gratuito cerca de la Piazza en enero — en verano pagan €3/h.</div>
+          <div class="tip"><span class="tip-arr">→</span>Comprar la entrada combinada Torre + Catedral + Baptisterio en opapisa.it.</div>
+        </div>
+        <div class="km">↔ 80 km desde Cinque Terre</div>
+      </div>
+    </div>
+
+    <!-- 09 SIENA -->
+    <div class="stop fade-up" id="stop-9">
+      <div class="stop-dot">09</div>
+      <div class="stop-body">
+        <div class="stop-head">
+          <div>
+            <div class="stop-city">Siena & Val d'Orcia</div>
+            <div class="stop-region">Toscana</div>
+          </div>
+          <div class="stop-when">
+            <div class="stop-date">9 Ene</div>
+            <div class="stop-days">1 día · Toscana profunda</div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Piazza del Campo</span>
+          <span class="tag">Duomo de Siena</span>
+          <span class="tag">Val d'Orcia</span>
+          <span class="tag">SP146</span>
+        </div>
+        <p class="stop-desc">Siena es la ciudad medieval mejor conservada de Italia. Su Piazza del Campo, donde se celebra el Palio, es la plaza más bonita del país. Desde ahí, el desvío por la Val d'Orcia en auto es imprescindible — esas colinas con cipreses que son la postal clásica de la Toscana, vacías en enero.</p>
+        <div class="stop-tips">
+          <div class="tip"><span class="tip-arr">→</span>Recorrer la SP146 entre Pienza y San Quirico d'Orcia — uno de los paisajes más icónicos de Europa.</div>
+          <div class="tip"><span class="tip-arr">→</span>El Duomo de Siena tiene mosaicos de mármol en el piso visibles solo en ciertas fechas — verificar en operaduomo.siena.it.</div>
+        </div>
+        <div class="km">↔ 75 km desde Pisa</div>
+      </div>
+    </div>
+
+    <!-- 10 ROMA -->
+    <div class="stop fade-up" id="stop-10">
+      <div class="stop-dot">10</div>
+      <div class="stop-body">
+        <div class="stop-head">
+          <div>
+            <div class="stop-city">Roma</div>
+            <div class="stop-region">Lazio · La Ciudad Eterna</div>
+          </div>
+          <div class="stop-when">
+            <div class="stop-date">10 – 13 Ene</div>
+            <div class="stop-days">4 días</div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Coliseo & Foro Romano</span>
+          <span class="tag">Vaticano & Sixtina</span>
+          <span class="tag">Pantheon</span>
+          <span class="tag">Trastevere</span>
+          <span class="tag">Fontana di Trevi</span>
+          <span class="tag">Galería Borghese</span>
+        </div>
+        <p class="stop-desc">Roma necesita al menos 4 días para raspar la superficie. En enero, el Coliseo tiene colas de 30 minutos versus 2 horas en agosto. Trastevere para las noches — en invierno recupera su identidad de barrio sin el turismo de masa. El Vaticano sigue siendo el más visitado del mundo pero en temporada baja es manejable.</p>
+        <div class="stop-tips">
+          <div class="tip"><span class="tip-arr">→</span>Reservar Vaticano + Capilla Sixtina en museivaticani.va con 1–2 semanas de anticipación mínimo.</div>
+          <div class="tip"><span class="tip-arr">→</span>Dejar el auto — el ZTL (Zona Tráfico Limitado) cubre casi todo el centro y la multa llega al domicilio.</div>
+          <div class="tip"><span class="tip-arr">→</span>Cacio e pepe y carbonara en Trastevere o Testaccio — las mejores trattorias de Roma están ahí.</div>
+          <div class="tip"><span class="tip-arr">→</span>Galería Borghese: máximo 360 personas, turnos de 2 horas — reservar en galleriaborghese.it.</div>
+        </div>
+        <div class="km">↔ 230 km desde Siena</div>
+      </div>
+    </div>
+
+    <!-- 11 NAPOLI -->
+    <div class="stop fade-up" id="stop-11">
+      <div class="stop-dot">11</div>
+      <div class="stop-body">
+        <div class="stop-head">
+          <div>
+            <div class="stop-city">Napoli & Pompeya</div>
+            <div class="stop-region">Campania</div>
+          </div>
+          <div class="stop-when">
+            <div class="stop-date">14 Ene</div>
+            <div class="stop-days">1–2 días · el sur de verdad</div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Spaccanapoli</span>
+          <span class="tag">Museo Arqueológico Nac.</span>
+          <span class="tag">Pompeya</span>
+          <span class="tag hot">Pizza en Da Michele</span>
+        </div>
+        <p class="stop-desc">Nápoles es la ciudad más intensa de Italia: caótica, ruidosa, apasionada y con la mejor pizza del mundo. Pompeya queda a 30 minutos en tren y en enero está casi desierta. El Museo Arqueológico Nacional tiene la mejor colección greco-romana del planeta.</p>
+        <div class="stop-tips">
+          <div class="tip"><span class="tip-arr">→</span>L'Antica Pizzeria da Michele: margherita o marinara, sin reserva — llegar antes de las 12:30.</div>
+          <div class="tip"><span class="tip-arr">→</span>Pompeya en invierno: llevar abrigo, viento frío. Llegar abriendo (9:00) para estar solos.</div>
+          <div class="tip"><span class="tip-arr">→</span>Dejar el auto fuera — Nápoles centro es un caos para circular. Metro línea 1 cubre el centro.</div>
+        </div>
+        <div class="km">↔ 230 km desde Roma</div>
+      </div>
+    </div>
+
+    <!-- 12 AMALFI -->
+    <div class="stop fade-up" id="stop-12">
+      <div class="stop-dot">12</div>
+      <div class="stop-body">
+        <div class="stop-head">
+          <div>
+            <div class="stop-city">Costa Amalfitana</div>
+            <div class="stop-region">Campania · Final del viaje</div>
+          </div>
+          <div class="stop-when">
+            <div class="stop-date">15 Ene</div>
+            <div class="stop-days">1 día · fin de ruta</div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">Positano</span>
+          <span class="tag">Amalfi</span>
+          <span class="tag">Ravello</span>
+          <span class="tag blue">Carretera SS163</span>
+        </div>
+        <p class="stop-desc">La SS163 es una de las carreteras más dramáticas de Europa: acantilados verticales, curvas de 180° y el Tirreno de fondo. En enero los pueblos están casi solos y algunos hoteles cierran, pero los que abren tienen precios mínimos. Un cierre perfecto para el viaje.</p>
+        <div class="stop-tips">
+          <div class="tip"><span class="tip-arr">→</span>La carretera tiene tramos de un solo carril — conducir con calma, ceder a los autobuses locales.</div>
+          <div class="tip"><span class="tip-arr">→</span>Subir a Ravello para la vista panorámica más espectacular de toda la costa.</div>
+          <div class="tip"><span class="tip-arr">→</span>Limoncello y sfogliatella como souvenirs de regreso — los mejores son de los productores locales.</div>
+        </div>
+        <div class="km">↔ 60 km desde Nápoles</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TIPS DE INVIERNO -->
+<section class="winter">
+  <div class="winter-inner">
+    <p class="s-label">Tips de Temporada</p>
+    <h2 class="s-title">Italia en invierno:<br>lo que nadie te cuenta</h2>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">🌡️</div>
+        <h3>Clima por zona</h3>
+        <p>Norte (Milán, Venecia): 2–8°C, niebla habitual y posible nieve. Centro (Florencia, Roma): 6–12°C, lluvia moderada. Sur (Nápoles, Amalfi): 10–15°C, más suave pero con viento. Llevar abrigo de plumas, impermeable y capas.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🚗</div>
+        <h3>Conducir en Italia</h3>
+        <p>Cadenas de nieve obligatorias en el norte desde octubre a abril — el rental las incluye o las cobra aparte. El ZTL (Zona Tráfico Limitado) en centros históricos es la trampa clásica: señalizado con cámara y disco azul, la multa llega a tu domicilio semanas después.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">💶</div>
+        <h3>Presupuesto de invierno</h3>
+        <p>Los hoteles bajan 30–50% versus verano. Los museos mantienen precio estable (10–20€). Un hotel 4 estrellas en Florencia puede costar €80/noche en enero. El gran ahorro está en alojamiento — úsalo para comer mejor.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🎄</div>
+        <h3>Fiestas y cierres</h3>
+        <p>El 1 de enero casi todo cierra. El 6 de enero (Epifanía) es festivo nacional. Muchos museos cierran los lunes. Algunas trattorias familiares cierran 2 semanas en enero — verificar siempre antes de ir con TheFork o llamando directo.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🎟️</div>
+        <h3>Reservas imprescindibles</h3>
+        <p>Incluso en temporada baja hay que reservar: La Última Cena (meses antes, obligatorio), Galería Borghese (máx. 360 personas por turno), Capilla Sixtina, y subida a la Torre de Pisa. El resto es flexible pero se agradece reservar 1–2 días antes.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🍷</div>
+        <h3>Comer y beber bien</h3>
+        <p>El "menù turistico" en la puerta siempre es el peor valor. Busca trattorias sin menú en inglés. Aperitivo entre 18–20 hrs en bares locales. El vino della casa en garrafa siempre es la mejor relación precio-calidad. Negroni, no Aperol Spritz.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRÁCTICA -->
+<section class="practical">
+  <p class="s-label">Info Práctica</p>
+  <h2 class="s-title">Lo que necesitas saber</h2>
+  <div class="prac-grid">
+
+    <div class="prac-block">
+      <h3>Presupuesto estimado</h3>
+      <ul class="prac-list">
+        <li><span>Alojamiento (3–4★) promedio por noche</span><span>€80 – 130</span></li>
+        <li><span>Alquiler de auto (21 días, compacto)</span><span>€600 – 900</span></li>
+        <li><span>Gasolina total (~2.100 km)</span><span>€200 – 280</span></li>
+        <li><span>Peajes en autopistas (autostrade)</span><span>€80 – 120</span></li>
+        <li><span>Comida por persona / día</span><span>€40 – 70</span></li>
+        <li><span>Museos y entradas / día</span><span>€15 – 25</span></li>
+        <li class="total"><span>Total estimado, 2 personas, 21 días</span><span>€4.500 – 6.500</span></li>
+      </ul>
+    </div>
+
+    <div class="prac-block">
+      <h3>El auto — claves</h3>
+      <ul class="prac-list">
+        <li><span>Tipo recomendado</span><span>Compacto diesel o híbrido</span></li>
+        <li><span>Cadenas de nieve</span><span>Obligatorio norte de Italia</span></li>
+        <li><span>ZTL</span><span>No entrar al centro histórico</span></li>
+        <li><span>Autopistas</span><span>Peaje electrónico o efectivo</span></li>
+        <li><span>Seguro adicional</span><span>CDW completo — recomendado</span></li>
+        <li><span>Combustible</span><span>Verificar benzina vs gasolio</span></li>
+      </ul>
+    </div>
+
+    <div class="prac-block">
+      <h3>Documentos y logística</h3>
+      <ul class="prac-list">
+        <li><span>Visa (Chile → Italia)</span><span>No — Schengen 90 días</span></li>
+        <li><span>Moneda</span><span>Euro (€)</span></li>
+        <li><span>Adaptador de corriente</span><span>Tipo F (europeo)</span></li>
+        <li><span>SIM / eSIM</span><span>TIM, Vodafone IT o Airalo</span></li>
+        <li><span>Seguro de viaje</span><span>Con cobertura médica en UE</span></li>
+        <li><span>Vuelo recomendado</span><span>SCL → MXP vía MAD (Iberia)</span></li>
+      </ul>
+    </div>
+
+    <div class="prac-block">
+      <h3>Apps esenciales</h3>
+      <ul class="prac-list">
+        <li><span>Google Maps (descargar offline)</span><span>Navegación</span></li>
+        <li><span>Booking / Airbnb</span><span>Alojamiento</span></li>
+        <li><span>TheFork</span><span>Reservas restaurantes</span></li>
+        <li><span>Trenitalia / Italo</span><span>Trenes entre ciudades</span></li>
+        <li><span>XE Currency</span><span>Tipo de cambio</span></li>
+        <li><span>Google Translate (modo cámara)</span><span>Menús y señales</span></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-name">Italia Roadtrip</div>
+    <div class="footer-sub">Diciembre 2025 — Enero 2026 · Milano → Costa Amalfitana</div>
+  </div>
+  <div class="footer-note">
+    <div>12 paradas · 21 días · ~2.100 km</div>
+    <div style="margin-top:4px;opacity:.4">Buon viaggio 🇮🇹</div>
+  </div>
+</footer>
+
+<script>
+// ── Scroll fade-in ──
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+
+// ── Italy Canvas Map ──
+(function(){
+  const canvas = document.getElementById('italy-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = 360, H = 560;
+
+  // Italy simplified outline points [x, y]
+  const italyPath = [
+    [72,38],[110,28],[155,22],[205,32],[252,52],[282,75],[268,98],
+    [248,102],[253,122],[235,148],[250,178],[264,218],[274,264],
+    [288,308],[298,342],[306,378],[326,398],[336,418],[330,442],
+    [310,458],[286,448],[262,438],[252,448],[246,463],[232,468],
+    [212,452],[208,438],[192,432],[182,442],[175,456],[168,448],
+    [172,428],[182,412],[192,398],[200,375],[196,352],[180,336],
+    [160,326],[150,306],[144,276],[136,246],[124,222],[110,202],
+    [104,182],[92,162],[74,144],[58,126],[52,106],[62,82],[72,62],[72,38]
+  ];
+
+  // Sicily
+  const sicily = [
+    [148,488],[172,476],[202,478],[218,494],[208,512],[183,522],[152,518],[138,502],[148,488]
+  ];
+
+  // Route stops [x, y, label, labelSide]
+  const stops = [
+    [152,65,'Milano','L'],
+    [145,55,'L. Como','L'],
+    [192,86,'Verona','R'],
+    [232,93,'Venezia','R'],
+    [185,138,'Bologna','L'],
+    [172,182,'Firenze','L'],
+    [114,192,'C.Terre','L'],
+    [136,202,'Pisa','L'],
+    [160,226,'Siena','L'],
+    [185,316,'Roma','L'],
+    [210,390,'Napoli','R'],
+    [220,415,'Amalfi','R'],
+  ];
+
+  function drawShape(pts, fill, stroke, lw){
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+    ctx.closePath();
+    ctx.fillStyle = fill; ctx.fill();
+    ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke();
+  }
+
+  function drawBase(){
+    ctx.clearRect(0,0,W,H);
+    drawShape(italyPath,'rgba(255,255,255,0.06)','rgba(255,255,255,0.18)',1.5);
+    drawShape(sicily,'rgba(255,255,255,0.05)','rgba(255,255,255,0.12)',1);
+    // Sardinia
+    const sardinia=[[52,288],[66,276],[78,283],[80,308],[70,328],[52,338],[46,322],[46,302],[52,288]];
+    drawShape(sardinia,'rgba(255,255,255,0.04)','rgba(255,255,255,0.10)',1);
+  }
+
+  let prog = 0;
+  function draw(){
+    drawBase();
+    const total = stops.length - 1;
+    const frac = prog / 100;
+    const segIdx = Math.min(Math.floor(frac * total), total - 1);
+    const segFrac = (frac * total) % 1;
+
+    // Dashed route line
+    ctx.save();
+    ctx.strokeStyle = '#002eff';
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([7,5]);
+    ctx.lineDashOffset = -prog * 0.6;
+    ctx.beginPath();
+    for(let i=0;i<stops.length-1;i++){
+      const [ax,ay]=stops[i], [bx,by]=stops[i+1];
+      if(i===0) ctx.moveTo(ax,ay);
+      if(i < segIdx){
+        ctx.lineTo(bx,by);
+      } else if(i===segIdx){
+        ctx.lineTo(ax+(bx-ax)*segFrac, ay+(by-ay)*segFrac);
+        break;
+      }
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    // Dots and labels
+    stops.forEach(([x,y,label,side],i){
+      const p = i / total;
+      if(p > frac + 0.01) return;
+      // Glow
+      ctx.beginPath();
+      ctx.arc(x,y,7,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,61,0,0.22)';
+      ctx.fill();
+      // Dot
+      ctx.beginPath();
+      ctx.arc(x,y,3.5,0,Math.PI*2);
+      ctx.fillStyle='#ff3d00';
+      ctx.fill();
+      // Label
+      ctx.font='bold 9px Barlow,sans-serif';
+      ctx.fillStyle='rgba(255,255,255,0.82)';
+      ctx.textAlign = side==='R' ? 'left' : 'right';
+      ctx.fillText(label, side==='R' ? x+9 : x-9, y+3.5);
+    });
+
+    if(prog < 100){
+      prog += 1.1;
+      requestAnimationFrame(draw);
+    }
+  }
+
+  const canvasIO = new IntersectionObserver(entries => {
+    if(entries[0].isIntersecting){ draw(); canvasIO.disconnect(); }
+  },{threshold:0.3});
+  canvasIO.observe(canvas);
+})();
+</script>
+</body>
+</html>
